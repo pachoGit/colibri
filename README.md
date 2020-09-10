@@ -1,4 +1,4 @@
-# Colibri Sofware
+# Colibri Software
 
 ## Qué es Colibri?
 
