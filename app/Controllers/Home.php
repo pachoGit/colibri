@@ -7,7 +7,7 @@ class Home extends BaseController
 	{
         $bd = \Config\Database::connect();
         if ($bd)
-            return "Base de datos conectado";
+            return view("estructura");
 		return view('welcome_message');
 	}
 

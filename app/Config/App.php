@@ -21,7 +21,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://localhost/theecho/';
+	public $baseURL = 'http://localhost/colibri/';
 
 	/*
 	|--------------------------------------------------------------------------
