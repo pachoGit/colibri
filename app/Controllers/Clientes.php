@@ -4,13 +4,12 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
-use App\Models\ModeloCiclos;
+use App\Models\ModeloClientes;
 
-class Ciclos extends Controller
+class Clientes extends Controller
 {
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -31,18 +30,17 @@ class Ciclos extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloCiclos = new ModeloCiclos();
-            $ciclos = $modeloCiclos->traerCiclos($cliente);
-            if (empty($ciclos))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $ciclos]);
-            return json_encode(["Estado" => 200, "Total" => count($ciclos), "Detalles" => $ciclos]);
+            $modeloClientes = new ModeloClientes();
+            $clientes = $modeloClientes->traerClientes();
+            if (empty($clientes))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $clientes]);
+            return json_encode(["Estado" => 200, "Total" => count($clientes), "Detalles" => $clientes]);
         }
         return json_encode($error, true);
     }
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -63,20 +61,19 @@ class Ciclos extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloCiclos = new ModeloCiclos();
-            $ciclo = $modeloCiclos->traerPorId($id, $cliente);
-            if (empty($ciclo))
+            $modeloClientes = new ModeloClientes();
+            $cliente = $modeloClientes->traerPorId($id);
+            if (empty($cliente))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El ciclo que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalle" => "El cliente que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $ciclo]);
+            return json_encode(["Estado" => 200, "Detalle" => $cliente]);
         }
         return json_encode($error);
     }
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -101,28 +98,28 @@ class Ciclos extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["ciclo"      => $solicitud->getVar("ciclo"),
-                      "id_cliente" => $cliente];
+            $datos = ["cliente"       => $solicitud->getVar("cliente"),
+                      "ruc"           => $solicitud->getVar("ruc"),
+                      "nombreEncar"   => $solicitud->getVar("nombreEncar"),
+                      "apellidoEncar" => $solicitud->getVar("apellidoEncar"),
+                      "fechaContrato" => $solicitud->getVar("fechaContrato")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloCiclos = new ModeloCiclos();
-            $validacion->setRules($modeloCiclos->validationRules, $modeloCiclos->validationMessages);
+            $modeloClientes = new ModeloClientes();
+            $validacion->setRules($modeloClientes->validationRules, $modeloClientes->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            $ciclo = $modeloCiclos->where(["estado" => 1, "ciclo" => $datos["ciclo"]])->findAll();
-            if (!empty($ciclo))
-                return json_encode(["Estado" => 404, "Detalle" => "Este ciclo ya existe"]);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
-            $modeloCiclos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del ciclo guardado"];
+            $modeloClientes->insert($datos);
+            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del cliente guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -160,8 +157,8 @@ class Ciclos extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloCiclos = new ModeloCiclos();
-            $validacion->setRules($modeloCiclos->validationRules, $modeloCiclos->validationMessages);
+            $modeloClientes = new ModeloClientes();
+            $validacion->setRules($modeloClientes->validationRules, $modeloClientes->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
@@ -169,8 +166,8 @@ class Ciclos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la ba[e de datos
-            $modeloCiclos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del ciclo actualizado"];
+            $modeloClientes->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del cliente actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -201,8 +198,8 @@ class Ciclos extends Controller
                 continue;
             }
             // Configuramos las reglas de validacion
-            $modeloCiclos = new ModeloCiclos();
-            $validacion->setRules($modeloCiclos->validationRules, $modeloCiclos->validationMessages);
+            $modeloClientes = new ModeloClientes();
+            $validacion->setRules($modeloClientes->validationRules, $modeloClientes->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
@@ -211,8 +208,8 @@ class Ciclos extends Controller
             }
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
-            $modeloCiclos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del ciclo eliminado"];
+            $modeloClientes->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del cliente eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

@@ -5,11 +5,13 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
 use App\Models\ModeloCursos;
+use App\Models\ModeloClientes;
 
 class Cursos extends Controller
 {
     public function index()
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -31,7 +33,7 @@ class Cursos extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $cursos = $modeloCursos->traerCursos(1);
+            $cursos = $modeloCursos->traerCursos($cliente);
             if (empty($cursos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $cursos]);
             return json_encode(["Estado" => 200, "Total" => count($cursos), "Detalles" => $cursos]);
@@ -41,6 +43,7 @@ class Cursos extends Controller
 
     public function show($id)
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -62,7 +65,7 @@ class Cursos extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $curso = $modeloCursos->traerPorId($id, 1);
+            $curso = $modeloCursos->traerPorId($id, $cliente);
             if (empty($curso))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "El curso que busca no esta registrado"], true);
@@ -74,6 +77,7 @@ class Cursos extends Controller
 
     public function create()
     {
+        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -102,7 +106,7 @@ class Cursos extends Controller
                       "id_categoria"  => $solicitud->getVar("id_categoria"),
                       "id_naturaleza" => $solicitud->getVar("id_naturaleza"),
                       "id_tipo"       => $solicitud->getVar("id_tipo"),
-                      "id_cliente"    => $solicitud->getVar("id_cliente")];
+                      "id_cliente"    => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -117,16 +121,22 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             /* Validamos las relaciones de la tabla */
-            $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], 1);
+            $modeloClientes = new ModeloClientes();
+            $correcto = $modeloClientes->traerPorId($datos["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
+            
+            $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], $datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe la categoria"]);
-            $correcto = $modeloCursos->traerNaturalezaPorId($datos["id_naturaleza"], 1);
+            $correcto = $modeloCursos->traerNaturalezaPorId($datos["id_naturaleza"], $datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe la naturaleza"]);
-            $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], 1);
+            $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], $datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
             $datos["fechaCreacion"] = date("Y-m-d");
+
             // Insertamos los datos a la ba[e de datos
             $modeloCursos->insert($datos);
             $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del curso guardado"];

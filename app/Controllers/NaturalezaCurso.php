@@ -11,6 +11,7 @@ class NaturalezaCurso extends Controller
 {
     public function index()
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -32,7 +33,7 @@ class NaturalezaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $naturalezas = $modeloCursos->traerNaturalezasCurso(1);
+            $naturalezas = $modeloCursos->traerNaturalezasCurso($cliente);
             if (empty($naturalezas))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $naturalezas]);
             return json_encode(["Estado" => 200, "Total" => count($naturalezas), "Detalles" => $naturalezas]);
@@ -42,6 +43,7 @@ class NaturalezaCurso extends Controller
 
     public function show($id)
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -63,7 +65,7 @@ class NaturalezaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $naturaleza = $modeloCursos->traerNaturalezaPorId($id, 1);
+            $naturaleza = $modeloCursos->traerNaturalezaPorId($id, $cliente);
             if (empty($naturaleza))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "La naturaleza del curso que busca no esta registrado"], true);
@@ -75,6 +77,7 @@ class NaturalezaCurso extends Controller
 
     public function create()
     {
+        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -100,7 +103,7 @@ class NaturalezaCurso extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["naturaleza" => $solicitud->getVar("naturaleza"),
-                      "id_cliente" => $solicitud->getVar("id_cliente")];
+                      "id_cliente" => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);

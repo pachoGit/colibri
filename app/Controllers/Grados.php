@@ -10,6 +10,7 @@ class Grados extends Controller
 {
     public function index()
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -31,7 +32,7 @@ class Grados extends Controller
                 continue;
             }
             $modeloGrados = new ModeloGrados();
-            $grados = $modeloGrados->traerGrados(1);
+            $grados = $modeloGrados->traerGrados($cliente);
             if (empty($grados))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $grados]);
             return json_encode(["Estado" => 200, "Total" => count($grados), "Detalles" => $grados]);
@@ -41,6 +42,7 @@ class Grados extends Controller
 
     public function show($id)
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -62,7 +64,7 @@ class Grados extends Controller
                 continue;
             }
             $modeloGrados = new ModeloGrados();
-            $grado = $modeloGrados->traerPorId($id, 1);
+            $grado = $modeloGrados->traerPorId($id, $cliente);
             if (empty($grado))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "El grado que busca no esta registrado"], true);
@@ -74,6 +76,7 @@ class Grados extends Controller
 
     public function create()
     {
+        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -99,7 +102,8 @@ class Grados extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["grado"      => $solicitud->getVar("grado"),
-                      "id_cliente" => $solicitud->getVar("id_cliente")];
+                      /*"id_cliente" => $solicitud->getVar("id_cliente")*/
+                      "id_cliente" => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -203,7 +207,7 @@ class Grados extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            $datos = ["estado" => 0, "FechaElim" => date("Y-m-d")];
+            $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
             $modeloGrados->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del grado eliminado"];

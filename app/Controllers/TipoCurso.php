@@ -11,6 +11,7 @@ class TipoCurso extends Controller
 {
     public function index()
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -32,7 +33,7 @@ class TipoCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $tipos = $modeloCursos->traerTiposCurso(1);
+            $tipos = $modeloCursos->traerTiposCurso($cliente);
             if (empty($tipos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $tipos]);
             return json_encode(["Estado" => 200, "Total" => count($tipos), "Detalles" => $tipos]);
@@ -42,6 +43,7 @@ class TipoCurso extends Controller
 
     public function show($id)
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -63,7 +65,7 @@ class TipoCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $tipo = $modeloCursos->traerTipoPorId($id, 1);
+            $tipo = $modeloCursos->traerTipoPorId($id, $cliente);
             if (empty($tipo))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "El tipo del curso que busca no esta registrado"], true);
@@ -75,6 +77,7 @@ class TipoCurso extends Controller
 
     public function create()
     {
+        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -100,7 +103,7 @@ class TipoCurso extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["tipo"       => $solicitud->getVar("tipo"),
-                      "id_cliente" => $solicitud->getVar("id_cliente")];
+                      "id_cliente" => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
