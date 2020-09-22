@@ -10,11 +10,6 @@ class ModeloTipoCurso extends Model
     protected $primaryKey = "idTipoCurso";
     protected $returnType = "array";
     protected $allowedFields = ["tipo","fechaCreacion", "fechaElim", "id_cliente", "estado"];
-    protected $validationRules = ["tipo"       => "required|string|max_length[255]",
-                                  "id_cliente" => "required|integer"];
-    protected $validationMessages = ["tipo"        => ["max_length" => "Se ha sobrepasado el tamanio del texto"],
-                                     "id_cliente"  => ["integer"    => "Ingrese un numero"]
-                                     ];
-
-
+    protected $validationRules = ["tipo"       => "required|string|max_length[255]"];
+    protected $validationMessages = ["tipo"        => ["max_length" => "Se ha sobrepasado el tamanio del texto"]];
 }

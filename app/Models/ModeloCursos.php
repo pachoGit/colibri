@@ -12,13 +12,11 @@ class ModeloCursos extends Model
     protected $allowedFields = ["curso", "estado", "id_tipo", "fechaCreacion",
                                 "id_categoria", "id_naturaleza", "fechaElim", "id_cliente"];
     protected $validationRules = ["curso"         => "required|string|max_length[255]",
-                                  "id_cliente"    => "required|integer",
                                   "id_categoria"  => "required|integer",
                                   "id_naturaleza" => "required|integer",
                                   "id_tipo"       => "required|integer"
                                   ];
     protected $validationMessages = ["curso"         => ["max_length" => "Se ha sobrepasado el tamanio del texto"],
-                                     "id_cliente"    => ["integer"    => "Ingrese un numero"],
                                      "id_categoria"  => ["integer"    => "Ingrese un numero"],
                                      "id_naturaleza" => ["integer"    => "Ingrese un numero"],
                                      "id_tipo"       => ["integer"    => "Ingrese un numero"]

@@ -10,12 +10,9 @@ class ModeloGrados extends Model
     protected $primaryKey = "idGrado";
     protected $returnType = "array";
     protected $allowedFields = ["grado", "fechaCreacion", "fechaElim", "id_cliente", "estado"];
-    protected $validationRules = ["grado"      => "required|string|max_length[255]",
-                                  "id_cliente" => "required|integer"
-                                  ];
-    protected $validationMessages = ["grado"      => ["max_length" => "Se ha sobrepasado el tamanio del texto"],
-                                     "id_cliente" => ["integer"    => "Ingrese un numero"]
-                                     ];
+    protected $validationRules = ["grado"      => "required|string|max_length[255]"];
+
+    protected $validationMessages = ["grado"      => ["max_length" => "Se ha sobrepasado el tamanio del texto"]];
 
     // Trae los grados de un respectivo cliente
     public function traerGrados($cliente)

@@ -39,6 +39,7 @@ $routes->resource("naturalezaCurso");
 $routes->resource("tipoCurso");
 $routes->resource("cursos");
 $routes->resource("ciclos");
+$routes->resource("clientes");
 
 /**
  * --------------------------------------------------------------------

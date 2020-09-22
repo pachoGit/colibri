@@ -10,12 +10,8 @@ class ModeloCiclos extends Model
     protected $primaryKey = "idCiclo";
     protected $returnType = "array";
     protected $allowedFields = ["ciclo", "fechaCreacion", "fechaElim", "id_cliente", "estado"];
-    protected $validationRules = ["ciclo"      => "required|string|max_length[255]",
-                                  "id_cliente" => "required|integer"
-                                  ];
-    protected $validationMessages = ["ciclo"      => ["max_length" => "Se ha sobrepasado el tamanio del texto"],
-                                     "id_cliente" => ["integer"    => "Ingrese un numero"]
-                                     ];
+    protected $validationRules = ["ciclo"      => "required|string|max_length[255]"];
+    protected $validationMessages = ["ciclo"      => ["max_length" => "Se ha sobrepasado el tamanio del texto"]];
 
     // Trae los ciclos de un respectivo cliente
     public function traerCiclos($cliente)
