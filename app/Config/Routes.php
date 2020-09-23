@@ -42,6 +42,7 @@ $routes->resource("ciclos");
 $routes->resource("clientes");
 $routes->resource("alumnos");
 $routes->resource("profesores");
+$routes->resource("modulos");
 
 /**
  * --------------------------------------------------------------------
