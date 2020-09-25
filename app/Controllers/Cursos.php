@@ -135,8 +135,14 @@ class Cursos extends Controller
             $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], $datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
-            $datos["fechaCreacion"] = date("Y-m-d");
 
+            $curso = $modeloCursos->where(["estado"     => 1,
+                                           "id_cliente" => $cliente,
+                                           "curso"      => $datos["curso"]])->findAll();
+            if (!empty($curso))
+                return json_encode(["Estado" => 404, "Detalle" => "Este curso ya existe"], true);
+
+            $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloCursos->insert($datos);
             $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del curso guardado"];
@@ -183,6 +189,9 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la base de datos
+            $curso = $modeloCursos->where("estado", 1)->find($id);
+            if (empty($curso))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el curso"], true);
             $modeloCursos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del curso actualizado"];
             return json_encode($data, true);
@@ -214,13 +223,9 @@ class Cursos extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloCursos = new ModeloCursos();
-            $validacion->setRules($modeloCursos->validationRules, $modeloCursos->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datos
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $curso = $modeloCursos->where("estado", 1)->find($id);
+            if (empty($curso))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el curso"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos

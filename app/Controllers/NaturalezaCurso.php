@@ -117,6 +117,11 @@ class NaturalezaCurso extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
+            $grado = $modeloGrados->where(["estado"     => 1,
+                                           "id_cliente" => $cliente,
+                                           "naturaleza" => $datos["naturaleza"]])->findAll();
+            if (!empty($naturaleza))
+                return json_encode(["Estado" => 404, "Detalle" => "Esta naturaleza ya existe"], true);                
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la base de datos
             $modeloNaturalezaCurso->insert($datos);
@@ -164,6 +169,9 @@ class NaturalezaCurso extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la base de datos
+            $naturaleza = $modeloNaturalezaCurso->where("estado", 1)->find($id);
+            if (empty($naturaleza))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe la naturaleza"], true);
             $modeloNaturalezaCurso->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos de la naturaleza actualizado"];
             return json_encode($data, true);
@@ -195,16 +203,12 @@ class NaturalezaCurso extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloNaturalezaCurso = new ModeloNaturalezaCurso();
-            $validacion->setRules($modeloNaturalezaCurso->validationRules, $modeloNaturalezaCurso->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datos
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
             $datos = ["fechaElim" => date("Y-m-d"),
                       "estado"    => 0];
             // Insertamos los datos a la base de datos
+            $naturaleza = $modeloNaturalezaCurso->where("estado", 1)->find($id);
+            if (empty($naturaleza))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe la naturaleza"], true);
             $modeloNaturalezaCurso->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos de la naturaleza eliminado"];
             return json_encode($data, true);

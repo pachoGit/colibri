@@ -117,6 +117,11 @@ class CategoriaCurso extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
+            $categoria = $modeloCategoriaCurso->where(["estado"     => 1,
+                                                       "id_cliente" => $cliente,
+                                                       "categoria"  => $datos["categoria"]])->findAll();
+            if (!empty($categoria))
+                return json_encode(["Estado" => 404, "Detalle" => "Este categoria ya existe"], true);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloCategoriaCurso->insert($datos);
@@ -164,6 +169,9 @@ class CategoriaCurso extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la base de datos
+            $categoria = $modeloCategoriaCurso->where("estado", 1)->find($id);
+            if (empty($categoria))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe la categoria"], true);
             $modeloCategoriaCurso->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos de la categoria actualizado"];
             return json_encode($data, true);
@@ -195,13 +203,9 @@ class CategoriaCurso extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloCategoriaCurso = new ModeloCategoriaCurso();
-            $validacion->setRules($modeloCategoriaCurso->validationRules, $modeloCategoriaCurso->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datos
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $categoria = $modeloCategoriaCurso->where("estado", 1)->find($id);
+            if (empty($categoria))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe la categoria"], true);
             $datos = ["fechaElim" => date("Y-m-d"),
                       "estado"    => 0];
             // Insertamos los datos a la base de datos

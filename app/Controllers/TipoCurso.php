@@ -117,6 +117,11 @@ class TipoCurso extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
+            $tipo = $modeloTipoCurso->where(["estado"     => 1,
+                                             "id_cliente" => $cliente,
+                                             "tipo"       => $datos["tipo"]])->findAll();
+            if (!empty($tipo))
+                return json_encode(["Estado" => 404, "Detalle" => "Este tipo ya existe"]);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la base de datos
             $modeloTipoCurso->insert($datos);
@@ -164,6 +169,9 @@ class TipoCurso extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la base de datos
+            $tipo = $modeloTipoCurso->where("estado", 1)->find($id);
+            if (empty($tipo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el tipo"], true);
             $modeloTipoCurso->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos de la tipo actualizado"];
             return json_encode($data, true);
@@ -195,13 +203,9 @@ class TipoCurso extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloTipoCurso = new ModeloTipoCurso();
-            $validacion->setRules($modeloTipoCurso->validationRules, $modeloTipoCurso->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datos
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $tipo = $modeloTipoCurso->where("estado", 1)->find($id);
+            if (empty($tipo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el tipo"], true);
             $datos = ["fechaElim" => date("Y-m-d"),
                       "estado"    => 0];
             // Insertamos los datos a la base de datos

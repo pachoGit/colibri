@@ -160,12 +160,15 @@ class Clientes extends Controller
             $modeloClientes = new ModeloClientes();
             $validacion->setRules($modeloClientes->validationRules, $modeloClientes->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
+            // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
+            $cliente = $modeloClientes->where("estado", 1)->find($id);
+            if (empty($cliente))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el cliente"], true);
             $modeloClientes->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del cliente actualizado"];
             return json_encode($data, true);
@@ -199,13 +202,9 @@ class Clientes extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloClientes = new ModeloClientes();
-            $validacion->setRules($modeloClientes->validationRules, $modeloClientes->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $cliente = $modeloClientes->where("estado", 1)->find($id);
+            if (empty($cliente))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el cliente"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
             $modeloClientes->update($id, $datos);

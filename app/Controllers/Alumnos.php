@@ -174,7 +174,10 @@ class Alumnos extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
+            $alumno = $modeloAlumnos->where("estado", 1)->find($id);
+            if (empty($alumno))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el alumno"], true);
             $modeloAlumnos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del alumno actualizado"];
             return json_encode($data, true);
@@ -208,15 +211,11 @@ class Alumnos extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloAlumnos = new ModeloAlumnos();
-            $validacion->setRules($modeloAlumnos->validationRules, $modeloAlumnos->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $alumno = $modeloAlumnos->where("estado", 1)->find($id);
+            if (empty($alumno))
+                return json_encode(["Estado" => 200, "Detalle" => "No existe el alumno"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
             $modeloAlumnos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del alumno eliminado"];
             return json_encode($data, true);

@@ -101,9 +101,10 @@ class Modulos extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["modulo" => $solicitud->getVar("modulo"),
-                      "url"    => $solicitud->getVar("url"),
-                      "id_cliente" => $cliente];
+            $datos = ["modulo"         => $solicitud->getVar("modulo"),
+                      "url"            => $solicitud->getVar("url"),
+                      "id_moduloPadre" => $solicitud->getVar("id_moduloPadre"),
+                      "id_cliente"     => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -117,8 +118,13 @@ class Modulos extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
+            $modulo = $modeloModulos->where(["estado"     => 1,
+                                             "id_cliente" => $cliente,
+                                             "modulo"     => $datos["modulo"]])->findAll();
+            if (!empty($modulo))
+                return json_encode(["Estado" => 404, "Detalle" => "Este modulo ya existe"], true);                
             $datos["fechaCreacion"] = date("Y-m-d");
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
             $modeloModulos->insert($datos);
             $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del modulo guardado"];
             return json_encode($data, true);
@@ -167,6 +173,9 @@ class Modulos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la ba[e de datos
+            $modulo = $modeloModulos->where("estado", 1)->find($id);
+            if (empty($modulo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el modulo"], true);
             $modeloModulos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del modulo actualizado"];
             return json_encode($data, true);
@@ -200,15 +209,10 @@ class Modulos extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloModulos = new ModeloModulos();
-            $validacion->setRules($modeloModulos->validationRules, $modeloModulos->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
-            $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
+            $modulo = $modeloModulos->where("estado", 1)->find($id);
+            if (empty($modulo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el modulo"], true);
             $modeloModulos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del modulo eliminado"];
             return json_encode($data, true);

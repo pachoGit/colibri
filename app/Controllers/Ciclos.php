@@ -116,7 +116,9 @@ class Ciclos extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            $ciclo = $modeloCiclos->where(["estado" => 1, "ciclo" => $datos["ciclo"]])->findAll();
+            $ciclo = $modeloCiclos->where(["estado"     => 1,
+                                           "id_cliente" => $cliente,
+                                           "ciclo"      => $datos["ciclo"]])->findAll();
             if (!empty($ciclo))
                 return json_encode(["Estado" => 404, "Detalle" => "Este ciclo ya existe"]);
             $datos["fechaCreacion"] = date("Y-m-d");
@@ -168,7 +170,10 @@ class Ciclos extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            // Insertamos los datos a la ba[e de datos
+            // Insertamos los datos a la base de datos
+            $ciclo = $modeloCiclos->where("estado", 1)->find($id);
+            if (empty($ciclo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el ciclo"], true);
             $modeloCiclos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del ciclo actualizado"];
             return json_encode($data, true);
@@ -200,15 +205,11 @@ class Ciclos extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            // Configuramos las reglas de validacion
+
             $modeloCiclos = new ModeloCiclos();
-            $validacion->setRules($modeloCiclos->validationRules, $modeloCiclos->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            $ciclo = $modeloCiclos->where("estado", 1)->find($id);
+            if (empty($ciclo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el ciclo"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
             $modeloCiclos->update($id, $datos);

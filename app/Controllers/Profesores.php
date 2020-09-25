@@ -135,6 +135,7 @@ class Profesores extends Controller
 
     public function update($id)
     {
+        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -174,6 +175,9 @@ class Profesores extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la ba[e de datos
+            $profesor = $modeloProfesores->where("estado", 1)->find($id);
+            if (empty($profesor))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el profesor"], true);
             $modeloProfesores->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del profesor actualizado"];
             return json_encode($data, true);
@@ -207,15 +211,11 @@ class Profesores extends Controller
             }
             // Configuramos las reglas de validacion
             $modeloProfesores = new ModeloProfesores();
-            $validacion->setRules($modeloProfesores->validationRules, $modeloProfesores->validationMessages);
-            $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
-            if (($errores = $validacion->getErrors()))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
-            }
+            // Insertamos los datos a la base de datos
+            $profesor = $modeloProfesores->where("estado", 1)->find($id);
+            if (empty($profesor))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el profesor"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
-            // Insertamos los datos a la ba[e de datos
             $modeloProfesores->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del profesor eliminado"];
             return json_encode($data, true);
