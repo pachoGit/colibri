@@ -44,6 +44,10 @@ $routes->resource("alumnos");
 $routes->resource("profesores");
 $routes->resource("modulos");
 $routes->resource("perfiles");
+$routes->resource("permisos");
+$routes->resource("alumnoPorCurso");
+$routes->resource("secciones");
+$routes->resource("curSecPorProfesor");
 
 /**
  * --------------------------------------------------------------------

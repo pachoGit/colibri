@@ -4,10 +4,15 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
-use App\Models\ModeloCursos;
 use App\Models\ModeloClientes;
+use App\Models\ModeloCurSecPorProfesor;
+use App\Models\ModeloProfesores;
+use App\Models\ModeloCursos;
+use App\Models\ModeloSecciones;
+use App\Models\ModeloCiclos;
 
-class Cursos extends Controller
+
+class CurSecPorProfesor extends Controller
 {
     public function index()
     {
@@ -32,11 +37,11 @@ class Cursos extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloCursos = new ModeloCursos();
-            $cursos = $modeloCursos->traerCursos($cliente);
-            if (empty($cursos))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $cursos]);
-            return json_encode(["Estado" => 200, "Total" => count($cursos), "Detalles" => $cursos]);
+            $modeloCurSecPorProfesor = new ModeloCurSecPorProfesor();
+            $reg = $modeloCurSecPorProfesor->traerProfesoresPorCurso($cliente);
+            if (empty($reg))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $reg]);
+            return json_encode(["Estado" => 200, "Total" => count($reg), "Detalles" => $reg]);
         }
         return json_encode($error, true);
     }
@@ -64,11 +69,11 @@ class Cursos extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloCursos = new ModeloCursos();
-            $curso = $modeloCursos->traerPorId($id, $cliente);
+            $modeloCurSecPorProfesor = new ModeloCurSecPorProfesor();
+            $curso = $modeloCurSecPorProfesor->traerPorId($id, $cliente);
             if (empty($curso))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El curso que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalle" => "El CurSecPorProfesor que busca no esta registrado"], true);
             }
             return json_encode(["Estado" => 200, "Detalle" => $curso]);
         }
@@ -102,18 +107,18 @@ class Cursos extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["curso"         => $solicitud->getVar("curso"),
-                      "id_categoria"  => $solicitud->getVar("id_categoria"),
-                      "id_naturaleza" => $solicitud->getVar("id_naturaleza"),
-                      "id_tipo"       => $solicitud->getVar("id_tipo"),
-                      "id_cliente"    => $cliente];
+            $datos = ["id_profesor"  => $solicitud->getVar("id_profesor"),
+                      "id_curso"   => $solicitud->getVar("id_curso"),
+                      "id_seccion" => $solicitud->getVar("id_seccion"),
+                      "id_ciclo"   => $solicitud->getVar("id_ciclo"),
+                      "id_cliente" => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloCursos = new ModeloCursos();
-            $validacion->setRules($modeloCursos->validationRules, $modeloCursos->validationMessages);
+            $modeloCurSecPorProfesor = new ModeloCurSecPorProfesor();
+            $validacion->setRules($modeloCurSecPorProfesor->validationRules, $modeloCurSecPorProfesor->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
@@ -122,30 +127,40 @@ class Cursos extends Controller
             }
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
+            $modeloProfesores = new ModeloProfesores();
+            $modeloCursos = new ModeloCursos();
+            $modeloSecciones = new ModeloSecciones();
+            $modeloCiclos = new ModeloCiclos();
             $correcto = $modeloClientes->traerPorId($datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
             
-            $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], $datos["id_cliente"]);
+            $correcto = $modeloProfesores->traerPorId($datos["id_profesor"], $datos["id_cliente"]);
             if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la categoria"]);
-            $correcto = $modeloCursos->traerNaturalezaPorId($datos["id_naturaleza"], $datos["id_cliente"]);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el profesor"]);
+            $correcto = $modeloCursos->traerPorId($datos["id_curso"], $datos["id_cliente"]);
             if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la naturaleza"]);
-            $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], $datos["id_cliente"]);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el curso"]);
+            $correcto = $modeloSecciones->traerPorId($datos["id_seccion"], $datos["id_cliente"]);
             if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe la seccion"]);
+            $correcto = $modeloCiclos->traerPorId($datos["id_ciclo"], $datos["id_cliente"]);            
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"]);
 
-            $curso = $modeloCursos->where(["estado"     => 1,
-                                           "id_cliente" => $cliente,
-                                           "curso"      => $datos["curso"]])->findAll();
-            if (!empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "Este curso ya existe"], true);
+            $correcto = $modeloCurSecPorProfesor->where(["estado"     => 1,
+                                                         "id_cliente" => $cliente,
+                                                         "id_profesor"  => $datos["id_profesor"],
+                                                         "id_curso"   => $datos["id_curso"],
+                                                         "id_seccion" => $datos["id_seccion"],
+                                                         "id_ciclo"   => $datos["id_ciclo"]])->findAll();
+            if (!empty($correcto))
+                return json_encode(["Estado" => 404, "Detalle" => "Este profesor ya esta registrado <curso,seccion,ciclo>"], true);
 
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
-            $modeloCursos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del curso guardado"];
+            $modeloCurSecPorProfesor->insert($datos);
+            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del CurSecPorProfesor guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -180,8 +195,8 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloCursos = new ModeloCursos();
-            $validacion->setRules($modeloCursos->validationRules, $modeloCursos->validationMessages);
+            $modeloCurSecPorProfesor = new ModeloCurSecPorProfesor();
+            $validacion->setRules($modeloCurSecPorProfesor->validationRules, $modeloCurSecPorProfesor->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
@@ -189,21 +204,29 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             // Insertamos los datos a la base de datos
-            $curso = $modeloCursos->where("estado", 1)->find($id);
-            if (empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el curso"], true);
-            // Validamos si los datos son correctos
-            $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], $curso["id_cliente"]);
-            if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la categoria"]);
-            $correcto = $modeloCursos->traerNaturalezaPorId($datos["id_naturaleza"], $curso["id_cliente"]);
-            if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la naturaleza"]);
-            $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], $curso["id_cliente"]);
-            if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
+            $reg = $modeloCurSecPorProfesor->where("estado", 1)->find($id);
+            if (empty($reg))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el CurSecPorProfesor"], true);
             
-            $modeloCursos->update($id, $datos);
+            $modeloProfesores = new ModeloProfesores();
+            $modeloCursos = new ModeloCursos();
+            $modeloSecciones = new ModeloSecciones();
+            $modeloCiclos = new ModeloCiclos();
+            // Validamos si los datos son correctos
+            $correcto = $modeloProfesores->traerPorId($datos["id_profesor"], $reg["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el alumno"]);
+            $correcto = $modeloCursos->traerPorId($datos["id_curso"], $reg["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el curso"]);
+            $correcto = $modeloSecciones->traerPorId($datos["id_seccion"], $reg["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe la seccion"]);
+            $correcto = $modeloCiclos->traerPorId($datos["id_ciclo"], $reg["id_cliente"]);            
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"]);
+            
+            $modeloCurSecPorProfesor->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del curso actualizado"];
             return json_encode($data, true);
         }
@@ -233,15 +256,15 @@ class Cursos extends Controller
                 continue;
             }
             // Configuramos las reglas de validacion
-            $modeloCursos = new ModeloCursos();
-            $curso = $modeloCursos->where("estado", 1)->find($id);
-            if (empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el curso"], true);
+            $modeloCurSecPorProfesor = new ModeloCurSecPorProfesor();
+            $reg = $modeloCurSecPorProfesor->where("estado", 1)->find($id);
+            if (empty($reg))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el CurSecPorProfesor"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
-            $modeloCursos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del curso eliminado"];
+            $modeloCurSecPorProfesor->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del CurSecPorProfesor eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);
