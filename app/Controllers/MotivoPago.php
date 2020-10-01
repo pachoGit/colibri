@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
-use App\Models\ModeloPerfiles;
+use App\Models\ModeloMotivoPago;
 
-class Perfiles extends Controller
+class MotivoPago extends Controller
 {
     public function index()
     {
@@ -31,17 +31,18 @@ class Perfiles extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfiles = $modeloPerfiles->traerPerfiles($cliente);
-            if (empty($perfiles))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $perfiles]);
-            return json_encode(["Estado" => 200, "Total" => count($perfiles), "Detalles" => $perfiles]);
+            $modeloMotivoPago = new ModeloMotivoPago();
+            $motivo = $modeloMotivoPago->traerMotivoPago($cliente);
+            if (empty($motivo))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $motivo]);
+            return json_encode(["Estado" => 200, "Total" => count($motivo), "Detalles" => $motivo]);
         }
         return json_encode($error, true);
     }
 
     public function show($id)
     {
+        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -62,13 +63,13 @@ class Perfiles extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfil = $modeloPerfiles->traerPorId($id, $_SESSION["id_cliente"]);
-            if (empty($perfil))
+            $modeloMotivoPago = new ModeloMotivoPago();
+            $motivo = $modeloMotivoPago->traerPorId($id, $cliente);
+            if (empty($motivo))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El perfil que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalle" => "El motivo de pago que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $perfil]);
+            return json_encode(["Estado" => 200, "Detalle" => $motivo]);
         }
         return json_encode($error);
     }
@@ -100,30 +101,30 @@ class Perfiles extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["perfil"      => $solicitud->getVar("perfil"),
+            $datos = ["motivo"    => $solicitud->getVar("motivo"),
                       "id_cliente" => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloPerfiles = new ModeloPerfiles();
-            $validacion->setRules($modeloPerfiles->validationRules, $modeloPerfiles->validationMessages);
+            $modeloMotivoPago = new ModeloMotivoPago();
+            $validacion->setRules($modeloMotivoPago->validationRules, $modeloMotivoPago->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            $perfil = $modeloPerfiles->where(["estado"     => 1,
-                                              "id_cliente" => $cliente,
-                                              "perfil"     => $datos["perfil"]])->findAll();
-            if (!empty($perfil))
-                return json_encode(["Estado" => 404, "Detalle" => "Este perfil ya existe"]);
+            $motivo = $modeloMotivoPago->where(["estado"     => 1,
+                                                "id_cliente" => $cliente,
+                                                "motivo"      => $datos["motivo"]])->findAll();
+            if (!empty($motivo))
+                return json_encode(["Estado" => 404, "Detalle" => "Este motivo de pago ya existe"], true);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
-            $modeloPerfiles->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del perfil guardado"];
+            $modeloMotivoPago->insert($datos);
+            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del motivo guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -161,20 +162,20 @@ class Perfiles extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloPerfiles = new ModeloPerfiles();
-            $validacion->setRules($modeloPerfiles->validationRules, $modeloPerfiles->validationMessages);
+            $modeloMotivoPago = new ModeloMotivoPago();
+            $validacion->setRules($modeloMotivoPago->validationRules, $modeloMotivoPago->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            // Insertamos los datos a la ba[e de datos
-            $perfil = $modeloPerfiles->where("estado", 1)->find($id);
-            if (empty($perfil))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe el perfil"], true);
-            $modeloPerfiles->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del perfil actualizado"];
+            // Insertamos los datos a la base de datos
+            $motivo = $modeloMotivoPago->where("estado", 1)->find($id);
+            if (empty($motivo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el motivo de pago"], true);
+            $modeloMotivoPago->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del motivo actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -204,15 +205,15 @@ class Perfiles extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfil = $modeloPerfiles->where("estado", 1)->find($id);
-            if (empty($perfil))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe el perfil"], true);
+            // Configuramos las reglas de validacion
+            $modeloMotivoPago = new ModeloMotivoPago();
+            $motivo = $modeloMotivoPago->where("estado", 1)->find($id);
+            if (empty($motivo))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el motivo de pago"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
-            $modeloPerfiles->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del perfil eliminado"];
+            $modeloMotivoPago->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del motivo eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

@@ -4,11 +4,52 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
+use App\Models\ModeloUsuarios;
 use App\Models\ModeloPerfiles;
 
-class Perfiles extends Controller
+class Usuarios extends BaseController
 {
+    // De esta funcion se le envia a la vista de listar
+    public function ver()
+    {
+        echo view("usuarios/index");
+    }
+    
     public function index()
+    {
+        $solicitud = \Config\Services::request();
+        $validacion =\Config\Services::validation();
+        $cabecera = $solicitud->getHeaders();
+        $modeloRegistros = new ModeloRegistros();
+
+
+        $registros = $modeloRegistros->where("estado", 1)->findAll();
+
+        foreach ($registros as $clave => $valor)
+        {
+            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
+                continue;
+            }
+            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
+            if ($cabecera["Authorization"] != $autorizacion)
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
+                continue;
+            }
+            $modeloUsuarios = new ModeloUsuarios();
+            $usuarios = $modeloUsuarios->traerUsuarios(1/*$_SESSION["id_cliente"]*/);
+            if (empty($usuarios))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $usuarios], true);
+            //return json_encode(array('Estado' => 200, 'Total' => count($usuarios), 'Detalles' => $usuarios), true);
+            return json_encode(["Estado" => 200, "Total" => count($usuarios), "Detalles" => $usuarios], true);
+            //return ["Estado" => 200, "Total" => count($usuarios), "Detalles" => $usuarios];
+        }
+        return json_encode($error, true);
+    }
+
+    public function show($id)
     {
         $cliente = 1;
         $solictud = \Config\Services::request();
@@ -31,44 +72,13 @@ class Perfiles extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfiles = $modeloPerfiles->traerPerfiles($cliente);
-            if (empty($perfiles))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $perfiles]);
-            return json_encode(["Estado" => 200, "Total" => count($perfiles), "Detalles" => $perfiles]);
-        }
-        return json_encode($error, true);
-    }
-
-    public function show($id)
-    {
-        $solictud = \Config\Services::request();
-        $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
-        $modeloRegistros = new ModeloRegistros();
-
-        $registros = $modeloRegistros->where("estado", 1)->findAll();
-
-        foreach ($registros as $clave => $valor)
-        {
-            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
+            $modeloUsuarios = new ModeloUsuarios();
+            $usuario = $modeloUsuarios->traerPorId($id, $cliente);
+            if (empty($usuario))
             {
-                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
-                continue;
+                return json_encode(["Estado" => 404, "Detalle" => "El usuario que busca no esta registrado"], true);
             }
-            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
-            if ($cabecera["Authorization"] != $autorizacion)
-            {
-                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
-                continue;
-            }
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfil = $modeloPerfiles->traerPorId($id, $_SESSION["id_cliente"]);
-            if (empty($perfil))
-            {
-                return json_encode(["Estado" => 404, "Detalle" => "El perfil que busca no esta registrado"], true);
-            }
-            return json_encode(["Estado" => 200, "Detalle" => $perfil]);
+            return json_encode(["Estado" => 200, "Detalle" => $usuario]);
         }
         return json_encode($error);
     }
@@ -99,31 +109,45 @@ class Perfiles extends Controller
                 continue;
             }
 
-            // Tomamos los datos de HTTP
-            $datos = ["perfil"      => $solicitud->getVar("perfil"),
-                      "id_cliente" => $cliente];
+            $datos = ["nombres"     => $solicitud->getVar("nombres"),
+                      "apellidos"   => $solicitud->getVar("apellidos"),
+                      "dni"         => $solicitud->getVar("dni"),
+                      "sexo"        => $solicitud->getVar("sexo"),
+                      "rutaFoto"    => $solicitud->getVar("rutaFoto"),
+                      "direccion"   => $solicitud->getVar("direccion"),
+                      "correo"      => $solicitud->getVar("correo"),
+                      "contra"      => $solicitud->getVar("contra"),                      
+                      "edad"        => $solicitud->getVar("edad"),
+                      "id_perfil"   => $solicitud->getVar("id_perfil"),
+                      "comentario"  => $solicitud->getVar("comentario"),
+                      "id_cliente"  => $cliente];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloPerfiles = new ModeloPerfiles();
-            $validacion->setRules($modeloPerfiles->validationRules, $modeloPerfiles->validationMessages);
+            $modeloUsuarios = new ModeloUsuarios();
+            $validacion->setRules($modeloUsuarios->validationRules, $modeloUsuarios->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            $perfil = $modeloPerfiles->where(["estado"     => 1,
-                                              "id_cliente" => $cliente,
-                                              "perfil"     => $datos["perfil"]])->findAll();
-            if (!empty($perfil))
-                return json_encode(["Estado" => 404, "Detalle" => "Este perfil ya existe"]);
+            $modeloPerfiles = new ModeloPerfiles();
+
+            $perfil = $modeloPerfiles->where("estado", 1)->find($datos["id_perfil"]);
+            if (empty($perfil))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe ese perfil"], true);
+
+            $usuario = $modeloUsuarios->where(["correo" => $datos["correo"], "id_cliente" => $cliente])->findAll();
+            if (!empty($usuario))
+                return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
+
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
-            $modeloPerfiles->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del perfil guardado"];
+            $modeloUsuarios->insert($datos);
+            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del usuario guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -161,20 +185,31 @@ class Perfiles extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloPerfiles = new ModeloPerfiles();
-            $validacion->setRules($modeloPerfiles->validationRules, $modeloPerfiles->validationMessages);
+            $modeloUsuarios = new ModeloUsuarios();
+            $validacion->setRules($modeloUsuarios->validationRules, $modeloUsuarios->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
-            // Insertamos los datos a la ba[e de datos
-            $perfil = $modeloPerfiles->where("estado", 1)->find($id);
+            $modeloPerfiles = new ModeloPerfiles();
+
+            $perfil = $modeloPerfiles->where("estado", 1)->find($datos["id_perfil"]);
             if (empty($perfil))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe el perfil"], true);
-            $modeloPerfiles->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del perfil actualizado"];
+                return json_encode(["Estado" => 404, "Detalle" => "No existe ese perfil"], true);
+
+            // Insertamos los datos a la base de datos
+            $usuario = $modeloUsuarios->where("estado", 1)->find($id);
+            if (empty($usuario))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el usuario"], true);
+
+            $usuario = $modeloUsuarios->where("correo", $datos["correo"])->findAll();
+            if (!empty($usuario))
+                return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
+
+            $modeloUsuarios->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del usuario actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -204,17 +239,27 @@ class Perfiles extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-
-            $modeloPerfiles = new ModeloPerfiles();
-            $perfil = $modeloPerfiles->where("estado", 1)->find($id);
-            if (empty($perfil))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe el perfil"], true);
+            // Configuramos las reglas de validacion
+            $modeloUsuarios = new ModeloUsuarios();
+            $usuario = $modeloUsuarios->where("estado", 1)->find($id);
+            if (empty($usuario))
+                return json_encode(["Estado" => 404, "Detalle" => "No existe el usuario"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
-            // Insertamos los datos a la ba[e de datos
-            $modeloPerfiles->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del perfil eliminado"];
+            // Insertamos los datos a la base de datos
+            $modeloUsuarios->update($id, $datos);
+            $data = ["Estado" => 200, "Detalle" => "Datos del usuario eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);
+    }
+
+    // Funcion usuada para el inicio de sesion
+    public function traerUsuario($correo, $contra)
+    {
+        $modelo = new ModeloUsuarios();
+        $usuario = $modelo->where(["estado" => 1,
+                                   "correo" => $correo,
+                                   "contra" => $contra])->findAll();
+        return (empty($usuario) ? null : $usuario);
     }
 }
