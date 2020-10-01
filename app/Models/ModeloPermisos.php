@@ -39,4 +39,13 @@ class ModeloPermisos extends Model
                 ->get()->getResultArray();
     }
 
+    public function traerDePerfil($perfil, $cliente)
+    {
+        return $this->db->table("Permisos c")
+                ->where("c.estado", 1)
+                ->where("c.id_perfil", $perfil)
+                ->where("c.id_cliente", $cliente)
+                ->join("Modulos m", "c.id_modulo = m.idModulo")
+                ->get()->getResultArray();
+    }
 }

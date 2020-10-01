@@ -48,6 +48,10 @@ $routes->resource("permisos");
 $routes->resource("alumnoPorCurso");
 $routes->resource("secciones");
 $routes->resource("curSecPorProfesor");
+$routes->resource("tipoReporte");
+$routes->resource("motivoPago");
+$routes->resource("pagos");
+//$routes->resource("usuarios");
 
 /**
  * --------------------------------------------------------------------

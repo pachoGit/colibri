@@ -34,4 +34,13 @@ class ModeloModulos extends Model
                 ->where("m.id_cliente", $cliente)
                 ->get()->getResultArray();
     }
+
+    public function traerHijos($id, $cliente)
+    {
+        return $this->db->table("Modulos m")
+                ->where("m.estado", 1)
+                ->where("m.id_moduloPadre", $id)
+                ->where("m.id_cliente", $cliente)
+                ->get()->getResultArray();
+    }
 }

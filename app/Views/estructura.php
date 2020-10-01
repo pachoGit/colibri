@@ -9,7 +9,7 @@
     <title>Coliibri Software</title>
 
     <!-- Bootstrap core CSS -->
-<link href="<?php echo base_url().'/public/bootstrap-4.5.2/css/bootstrap.min.css';?>" rel="stylesheet">
+<link href="<?= base_url().'/public/bootstrap-4.5.2/css/bootstrap.min.css';?>" rel="stylesheet">
 
     <style>
       .bd-placeholder-img {
@@ -28,11 +28,11 @@
       }
     </style>
     <!-- Custom styles for this template -->
-    <link href="<?php echo base_url().'/app/Views/dashboard.css';?>" rel="stylesheet">
+    <link href="<?= base_url().'/app/Views/dashboard.css';?>" rel="stylesheet">
   </head>
   <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#"> <img class="img-thumbnail" src="app/Views/media/icono-contacto.png"> Herlyn Carlos </a>
+      <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#"> <img class="img-thumbnail" src="<?= base_url().'/app/Views/media/icono-contacto.png'; ?>"> Herlyn Carlos </a>
       <div class="container">
 	<!--<p class="navbar navbar-dark text-white h5">Administrador</p>-->
 	<blockquote class="blockquote text-right">
