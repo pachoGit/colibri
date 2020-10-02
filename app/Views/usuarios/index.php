@@ -3,7 +3,7 @@
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://localhost/colibri/index.php/usuarios/index",
+  CURLOPT_URL => "http://localhost/colibri/index.php/usuarios",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -11,21 +11,15 @@ curl_setopt_array($curl, array(
   CURLOPT_FOLLOWLOCATION => true,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
-  CURLOPT_POSTFIELDS => "nombres=pacho&apellidos=pacho&correo=pacho@gmail.com&contra=123&id_perfil=1&dni=45246323&sexo=M&rutaFoto=imagenes/pacho.png&direccion=Jr.%20Calle%20643&edad=20&comentario=Nada",
   CURLOPT_HTTPHEADER => array(
-    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
-    "Content-Type: application/x-www-form-urlencoded",
+    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ=="
   ),
 ));
 
 $response = curl_exec($curl);
 
 curl_close($curl);
-
-var_dump($response);
-
-$data = json_decode($response, true);
-
+$data =json_decode($response, true);
 
 switch(json_last_error()) {
         case JSON_ERROR_NONE:
