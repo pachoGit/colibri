@@ -8,6 +8,37 @@ use App\Models\ModeloAlumnos;
 
 class Alumnos extends Controller
 {
+    // Funciona
+    public function listar()
+    {
+        return view("alumnos/listar");
+    }
+
+    public function registrar()
+    {
+        return view("alumnos/registrar");
+    }
+    // Funciona 
+    public function ver($id)
+    {
+        $data = ["id" => $id];
+        return view("alumnos/ver", $data);
+        
+    }
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("alumnos/editar", $data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("alumnos/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/alumnos/listar");
+    }
+
     public function index()
     {
         $cliente = 1;
@@ -67,9 +98,9 @@ class Alumnos extends Controller
             $alumno = $modeloAlumnos->traerPorId($id, $cliente);
             if (empty($alumno))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El alumno que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El alumno que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $alumno]);
+            return json_encode(["Estado" => 200, "Detalles" => $alumno]);
         }
         return json_encode($error);
     }

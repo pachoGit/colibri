@@ -32,6 +32,7 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 //$routes->get('/preguntas/update', 'preguntas::update');
+/*
 $routes->resource("registros");
 $routes->resource("grados");
 $routes->resource("categoriaCurso");
@@ -51,7 +52,8 @@ $routes->resource("curSecPorProfesor");
 $routes->resource("tipoReporte");
 $routes->resource("motivoPago");
 $routes->resource("pagos");
-//$routes->resource("usuarios");
+$routes->resource("usuarios");
+*/
 
 /**
  * --------------------------------------------------------------------

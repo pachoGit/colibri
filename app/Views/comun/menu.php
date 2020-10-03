@@ -20,7 +20,7 @@
 
 		  <?php foreach ($modulo["hijos"] as $hijo): ?>
 		  <li class="nav-item">
-		    <a class="nav-link" href="<?= $hijo['url'];?>">
+		    <a class="nav-link" href="<?= base_url()."/index.php/".$hijo['url'];?>">
 
 		      <?= $hijo["modulo"]; ?>
 		    </a>
@@ -34,5 +34,7 @@
 	</div>
       </div>
     </nav>
+    <!--
   </div>
 </div>
+--!

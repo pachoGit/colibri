@@ -10,9 +10,49 @@ use App\Models\ModeloPerfiles;
 class Usuarios extends BaseController
 {
     // De esta funcion se le envia a la vista de listar
-    public function ver()
+    public function listar()
     {
-        echo view("usuarios/index");
+        echo view("usuarios/listar");
+    }
+
+    public function registrar()
+    {
+        $m_perfiles = new ModeloPerfiles();
+        $perfiles = $m_perfiles->traerPerfiles(1); // Reemplazar por la variable SESSION
+        $data = ["perfiles" => $perfiles];
+        return view("usuarios/registrar", $data);
+        return redirect()->to(base_url()."/index.php/usuarios/listar");
+    }
+
+    public function ver($id)
+    {
+        $m_usuarios = new ModeloUsuarios();
+        $usuario = $m_usuarios->traerPorId($id, 1); // El SESSION
+        $perfil = $usuario[0]["perfil"];
+        $data = ["perfil" => $perfil,
+                 "id"     => $id];
+        return view("usuarios/ver", $data);
+    }
+
+    public function editar($id)
+    {
+        $m_usuarios = new ModeloUsuarios();
+        $m_perfiles = new ModeloPerfiles();
+
+        $perfiles = $m_perfiles->traerPerfiles(1); // SESSION
+        $usuario = $m_usuarios->traerPorId($id, 1); // El SESSION
+        $mi_perfil = $usuario[0]["perfil"];
+        $data = ["mi_perfil" => $mi_perfil,
+                 "id"        => $id,
+                 "perfiles"  => $perfiles];
+        return view("usuarios/editar", $data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("usuarios/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/usuarios/listar");
     }
     
     public function index()
@@ -21,7 +61,6 @@ class Usuarios extends BaseController
         $validacion =\Config\Services::validation();
         $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
-
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
 
@@ -40,11 +79,10 @@ class Usuarios extends BaseController
             }
             $modeloUsuarios = new ModeloUsuarios();
             $usuarios = $modeloUsuarios->traerUsuarios(1/*$_SESSION["id_cliente"]*/);
+
             if (empty($usuarios))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $usuarios], true);
-            //return json_encode(array('Estado' => 200, 'Total' => count($usuarios), 'Detalles' => $usuarios), true);
             return json_encode(["Estado" => 200, "Total" => count($usuarios), "Detalles" => $usuarios], true);
-            //return ["Estado" => 200, "Total" => count($usuarios), "Detalles" => $usuarios];
         }
         return json_encode($error, true);
     }
@@ -76,9 +114,9 @@ class Usuarios extends BaseController
             $usuario = $modeloUsuarios->traerPorId($id, $cliente);
             if (empty($usuario))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El usuario que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El usuario que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $usuario]);
+            return json_encode(["Estado" => 200, "Detalles" => $usuario]);
         }
         return json_encode($error);
     }
@@ -140,7 +178,7 @@ class Usuarios extends BaseController
             if (empty($perfil))
                 return json_encode(["Estado" => 404, "Detalle" => "No existe ese perfil"], true);
 
-            $usuario = $modeloUsuarios->where(["correo" => $datos["correo"], "id_cliente" => $cliente])->findAll();
+            $usuario = $modeloUsuarios->where(["estado" => 1, "correo" => $datos["correo"], "id_cliente" => $cliente])->findAll();
             if (!empty($usuario))
                 return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
 
@@ -205,7 +243,7 @@ class Usuarios extends BaseController
                 return json_encode(["Estado" => 404, "Detalle" => "No existe el usuario"], true);
 
             $usuario = $modeloUsuarios->where("correo", $datos["correo"])->findAll();
-            if (!empty($usuario))
+            if (!empty($usuario) and ($usuario[0]["idUsuario"] != $id))
                 return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
 
             $modeloUsuarios->update($id, $datos);

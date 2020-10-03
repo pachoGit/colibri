@@ -8,6 +8,16 @@ use App\Models\ModeloPerfiles;
 
 class Perfiles extends Controller
 {
+    public function listar()
+    {
+        return view("perfiles/listar");
+    }
+
+    public function registrar()
+    {
+        return view("perfiles/registrar");
+    }
+    
     public function index()
     {
         $cliente = 1;
@@ -34,10 +44,13 @@ class Perfiles extends Controller
             $modeloPerfiles = new ModeloPerfiles();
             $perfiles = $modeloPerfiles->traerPerfiles($cliente);
             if (empty($perfiles))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $perfiles]);
-            return json_encode(["Estado" => 200, "Total" => count($perfiles), "Detalles" => $perfiles]);
+            {
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $perfiles], true);
+            }
+            return json_encode(["Estado" => 200, "Total" => count($perfiles), "Detalles" => $perfiles], true);
         }
         return json_encode($error, true);
+
     }
 
     public function show($id)
