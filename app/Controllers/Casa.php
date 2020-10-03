@@ -6,14 +6,9 @@ namespace App\Controllers;
 
 class Casa extends BaseController
 {
-    public function index()
+    public function traerModulos()
     {
-        // Datos para la cabezera
-        $datos_cabeza = ["perfil" => $_SESSION["perfil"],
-                         "titulo" => "INICIO",
-                         "nombre" => $_SESSION["nombres"]];
-
-        // Permisos que tiene el usuario
+                // Permisos que tiene el usuario
         $modeloPermisos = new \App\Models\ModeloPermisos();
         $permisos = $modeloPermisos->traerDePerfil($_SESSION["id_perfil"], $_SESSION["id_cliente"]);
 
@@ -48,13 +43,51 @@ class Casa extends BaseController
             $nmodulos[$i++] = ["modulo" => $modulo["modulo"], "hijos" => $modulo["hijos"]];
         }
 
-        $data_modulos = ["modulos" => $nmodulos];
-
-        echo view("comun/cabecera", $datos_cabeza);
-        echo view("comun/menu", $data_modulos);
-        return view("comun/pie");
-
+        return $nmodulos;
     }
+
+    public function index()
+    {
+        /*
+        $modeloPermisos = new \App\Models\ModeloPermisos();
+        $permisos = $modeloPermisos->traerDePerfil($_SESSION["id_perfil"], $_SESSION["id_cliente"]);
+
+        // Modulos a lo que tiene acceso el usuario
+        $modeloModulos = new \App\Models\ModeloModulos();
+        $i = 0;
+        $modulos = []; // Modulos en general al que tiene acceso
+        $hijos = [];   // SubModulos de '$modulos' al que tiene acceso
+        foreach ($permisos as $permiso)
+        {
+            $modulosHijos = $modeloModulos->traerHijos($permiso["id_modulo"], $permiso["id_cliente"]);
+            $j = 0;
+            foreach ($modulosHijos as $nhijos)
+            {
+                $hijos[$j++] = ["modulo" => $nhijos["modulo"], "url" => $nhijos["url"]];
+            }
+            $modulos[$i++] = ["modulo" => $permiso["modulo"], "hijos" => $hijos];
+            $j = 0;
+            $hijos = [];
+        }
+        $nmodulos = []; // Datos para el menu
+        $i = 0;
+        foreach ($modulos as $modulo)
+        {
+            if (empty($modulo["hijos"]))
+                continue;
+            $nmodulos[$i++] = ["modulo" => $modulo["modulo"], "hijos" => $modulo["hijos"]];
+        }
+        */
+        $nmodulos = $this->traerModulos();
+        
+        $data = ["perfil"  => $_SESSION["perfil"],
+                  "titulo"  => "INICIO",
+                  "nombre"  => $_SESSION["nombres"],
+                  "modulos" => $nmodulos];
+        
+        $this->cargarVistas("comun/inicio", $data);
+    }
+
 
 
     // Terminar la sesion

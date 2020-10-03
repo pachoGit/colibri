@@ -20,7 +20,6 @@ class ModeloProfesores extends Model
                                   "direccion"   => "required|string|max_length[255]",
                                   "edad"        => "required|integer|is_natural",
                                   "estudios"    => "required|string|max_length[255]",
-                                  "comentario"  => "required|string|max_length[255]",
                                   "correo"      => "required|string|max_length[255]|valid_email"
                                   ];
     protected $validationMessages = ["nombres"     => ["max_length"  => "Se ha sobrepasado el tamanio del texto"],

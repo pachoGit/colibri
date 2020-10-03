@@ -8,6 +8,37 @@ use App\Models\ModeloProfesores;
 
 class Profesores extends Controller
 {
+    public function listar()
+    {
+        return view("profesores/listar");
+    }
+
+    public function registrar()
+    {
+        return view("profesores/registrar");
+        return redirect()->to(base_url()."/index.php/profesores/listar");
+    }
+
+    public function ver($id)
+    {
+        $data = ["id" => $id];
+        return view("profesores/ver", $data);
+    }
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("profesores/editar", $data);
+        //return redirect()->to(base_url()."/index.php/profesores/listar");
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("profesores/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/profesores/listar");
+    }
+    
     public function index()
     {
         $cliente = 1;
@@ -67,9 +98,9 @@ class Profesores extends Controller
             $profesor = $modeloProfesores->traerPorId($id, $cliente);
             if (empty($profesor))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El profesor que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El profesor que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $profesor]);
+            return json_encode(["Estado" => 200, "Detalles" => $profesor]);
         }
         return json_encode($error);
     }
@@ -115,6 +146,8 @@ class Profesores extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
+
+            
             // Configuramos las reglas de validacion
             $modeloProfesores = new ModeloProfesores();
             $validacion->setRules($modeloProfesores->validationRules, $modeloProfesores->validationMessages);

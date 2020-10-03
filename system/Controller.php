@@ -219,5 +219,27 @@ class Controller
 			->run();
 	}
 
-	//--------------------------------------------------------------------
+    public function cargarVistas($vista = null, $data)
+    {
+        echo view("comun/cabecera", $data);
+        echo view("comun/menu");
+        echo view($vista);
+        echo view("comun/pie");
+    }
+
+    public function vistaSimple($vista = null)
+    {
+        echo view("comun/cabecera");
+        echo view("comun/menu");
+        echo view($vista);
+        echo view("comun/pie");
+    }
+
+    public function cargarCabeza($data)
+    {
+        echo view("comun/cabecera", $data);
+        echo view("comun/menu");
+    }
+
 }
+
