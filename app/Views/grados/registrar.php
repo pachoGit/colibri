@@ -87,7 +87,7 @@ $casa->cargarCabeza($datos);
 					Esto est&aacute; bien
 				    </div>
 				    <div class="invalid-feedback">
-					Ingrese su nombre
+					Ingrese el nombre del grado
 				    </div>
 				</div>
 			
