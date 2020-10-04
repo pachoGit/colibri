@@ -23,9 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
-    echo $response;
+
+    $data = substr($response, 0, -266);
+    $data = json_decode($data, true);
+
+    if ($data["Estado"] != 200)
+    {
+        var_dump($data);die;
+	}
+
+    $cred = ["data" => $data["credenciales"]];
+    
+    echo view("credenciales", $cred);
 }
 
 ?>
@@ -64,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     </head>
 <body>
 
-  <form class="form-signin">
+  <form  method="post" class="form-signin">
     <div class="text-center mb-4">
       <img class="mb-4" src="<?php echo base_url().'/public/media/colibri.jpg';?>" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Autorizaci&oacute;n para Colibri</h1>
@@ -91,6 +101,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2020</p>
   </form>
 
-  
 </body>
 </html>
