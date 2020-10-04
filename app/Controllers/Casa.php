@@ -48,38 +48,8 @@ class Casa extends BaseController
 
     public function index()
     {
-        /*
-        $modeloPermisos = new \App\Models\ModeloPermisos();
-        $permisos = $modeloPermisos->traerDePerfil($_SESSION["id_perfil"], $_SESSION["id_cliente"]);
-
-        // Modulos a lo que tiene acceso el usuario
-        $modeloModulos = new \App\Models\ModeloModulos();
-        $i = 0;
-        $modulos = []; // Modulos en general al que tiene acceso
-        $hijos = [];   // SubModulos de '$modulos' al que tiene acceso
-        foreach ($permisos as $permiso)
-        {
-            $modulosHijos = $modeloModulos->traerHijos($permiso["id_modulo"], $permiso["id_cliente"]);
-            $j = 0;
-            foreach ($modulosHijos as $nhijos)
-            {
-                $hijos[$j++] = ["modulo" => $nhijos["modulo"], "url" => $nhijos["url"]];
-            }
-            $modulos[$i++] = ["modulo" => $permiso["modulo"], "hijos" => $hijos];
-            $j = 0;
-            $hijos = [];
-        }
-        $nmodulos = []; // Datos para el menu
-        $i = 0;
-        foreach ($modulos as $modulo)
-        {
-            if (empty($modulo["hijos"]))
-                continue;
-            $nmodulos[$i++] = ["modulo" => $modulo["modulo"], "hijos" => $modulo["hijos"]];
-        }
-        */
         $nmodulos = $this->traerModulos();
-        
+
         $data = ["perfil"  => $_SESSION["perfil"],
                   "titulo"  => "INICIO",
                   "nombre"  => $_SESSION["nombres"],

@@ -1,13 +1,27 @@
 <?php
 
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     //var_dump($_FILES["rutaFoto"]);die;
+    if (!empty($_FILES["rutaFoto"]["name"]))
+    {
+        $ruta = "/public/profesores/".$_FILES["rutaFoto"]["name"];
+        $ruta2 = $_SESSION["ruta"]."profesores/".$_FILES["rutaFoto"]["name"];
+        move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
+    }
+    else
+    {
+        $usuario = new App\Models\ModeloProfesores();
+        $usuario = $usuario->traerPorId($_POST["idProfesor"], 1); // SESSION
+        $ruta = $usuario[0]["rutaFoto"];
+    }
+
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => "http://localhost/colibri/index.php/profesores/update/".$_POST["idProfesor"],
+        CURLOPT_URL => base_url()."/index.php/profesores/update/".$_POST["idProfesor"],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -21,13 +35,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "&dni=".$_POST["dni"].
         "&sexo=".$_POST["sexo"].
         "&edad=".$_POST["edad"].
-        "&rutaFoto="."/public/profesores/".$_FILES["rutaFoto"]["name"].
+        "&rutaFoto=".$ruta.
         "&direccion=".$_POST["direccion"].
         "&correo=".$_POST["correo"].
         "&estudios=".$_POST["estudios"].
         "&comentario=".$_POST["comentario"],
         CURLOPT_HTTPHEADER => array(
-            "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
+            $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
                                     ),
                                    ));
@@ -36,9 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     curl_close($curl);
 
-
     // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, -266);
+    $data = substr($response, 0, $_SESSION["tam"]);
     $data = json_decode($data, true);
     if ($data["Estado"] != 200)
     {
@@ -53,7 +66,7 @@ else
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => "http://localhost/colibri/index.php/profesores/show/".$id,
+        CURLOPT_URL => base_url()."/index.php/profesores/show/".$id,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -62,24 +75,16 @@ else
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
+            $_SESSION["auth"],
                                     ),
                                    ));
     $response = curl_exec($curl);
 
     curl_close($curl);
 
-
     // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, -266);
+    $data = substr($response, 0, $_SESSION["tam"]);
     $data = json_decode($data, true);
-
-    //if (session_start() == false)
-    //{
-    session_start();
-    //}
-
-    //namespace App\Controllers;
 
     $casa = new App\Controllers\Casa();
     $nmodulos = $casa->traerModulos();

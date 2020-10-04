@@ -32,6 +32,7 @@
 	  </div>
 	  <?php $contador++; endforeach;?>
 	</div>
+	<a href="<?= base_url().'/index.php/casa/salir'; ?>"  class="btn btn-outline-danger mt-5"> SALIR </a>
       </div>
     </nav>
     <!--

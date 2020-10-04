@@ -32,7 +32,7 @@
     </head>
     <body>
 	<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-	    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#"> <img class="img-thumbnail" src="<?= base_url().'/public/media/icono-contacto.png'; ?>">  <?= $nombre; ?> </a>
+	    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#"> <img class="img-thumbnail" src="<?= base_url().$_SESSION["rutaFoto"] ?>" width="48" height="48">  <?= $nombre; ?> </a>
 	    <div class="container">
 		<!--<p class="navbar navbar-dark text-white h5">Administrador</p>-->
 		<blockquote class="blockquote text-right">

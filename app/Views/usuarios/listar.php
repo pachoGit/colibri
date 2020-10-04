@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers;
+//session_start();
 
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://localhost/colibri/index.php/usuarios",
+    CURLOPT_URL => base_url()."/index.php/usuarios",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -14,25 +14,9 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
   CURLOPT_HTTPHEADER => array(
-    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
+      $_SESSION["auth"],
   ),
 ));
-
-/*
-curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://colibri.informaticapp.com/index.php/usuarios",
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => "",
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "GET",
-  CURLOPT_HTTPHEADER => array(
-    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ=="
-  ),
-));
-*/
 
 $response = curl_exec($curl);
 
@@ -40,17 +24,10 @@ curl_close($curl);
 
 
 // Puede que tengamos caracteres ocultos la final de la respuesta
-$data = substr($response, 0, -266);
+$data = substr($response, 0, $_SESSION["tam"]);
 $data = json_decode($data, true);
 
-/*
-if (session_start() == false)
-{
-    session_start();
-}
-*/
-
-$casa = new Casa();
+$casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
@@ -89,6 +66,7 @@ $casa->cargarCabeza($datos);
 				<th>Sexo</th>
 				<th>Correo</th>
 				<th>Foto</th>
+				<th>Perfil</th>                         
 				<th colspan="3">Operaciones</th>
 			    </tr>
 			</thead>
@@ -104,7 +82,8 @@ $casa->cargarCabeza($datos);
 				    <td><?php echo $usuario['edad']; ?></td>
 				    <td><?php echo ($usuario['sexo'] == "M" ? "Masculino" : "Femenino"); ?></td>
 				    <td><?php echo $usuario['correo']; ?></td>
-				    <td><img src='<?php echo base_url().$usuario["rutaFoto"]; ?>' witdh="75" height="75"></td>				    
+				    <td><img src='<?php echo base_url().$usuario["rutaFoto"]; ?>' witdh="75" height="75"></td>
+				    <td><?php echo $usuario['perfil']; ?></td>                    
 				    <td><a href="ver/<?= $usuario['idUsuario']?>" class="btn
 						 btn-secondary">Ver</a></td>
 				    <td><a href="editar/<?= $usuario['idUsuario']?>" class="btn

@@ -5,7 +5,7 @@ session_start();
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/profesores/delete/".$id,
+    CURLOPT_URL => base_url()."/index.php/cursos/delete/".$id,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -23,4 +23,3 @@ $response = curl_exec($curl);
 curl_close($curl);
 
 ?>
-

@@ -5,12 +5,11 @@ session_start();
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/perfiles",
+    CURLOPT_URL => base_url()."/index.php/cursos",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
   CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
   CURLOPT_FOLLOWLOCATION => true,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
@@ -20,6 +19,7 @@ curl_setopt_array($curl, array(
 ));
 
 $response = curl_exec($curl);
+
 curl_close($curl);
 
 // Puede que tengamos caracteres ocultos la final de la respuesta
@@ -30,24 +30,11 @@ $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-         "titulo"  => "PERFILES",                                                                                                                   
+         "titulo"  => "CURSOS",                                                                                                                   
          "nombre"  => $_SESSION["nombres"],                                                                                                       
          "modulos" => $nmodulos];
 
 $casa->cargarCabeza($datos);
-
-
-$m_permisos = new App\Models\ModeloPermisos();
-/*
-
-$m_perfiles = new App\Models\ModeloPerfiles();
-$perfiles = $m_perfiles->traerPerfiles(1); // SESSION
-
-foreach ($perfiles as $perfil)
-{
-    $permisos = $m_perfiles->traerPorPerfil($perfil["idPerfil"], 1); // SESSION
-}
-*/
 
 ?>
 
@@ -68,34 +55,35 @@ foreach ($perfiles as $perfil)
 		<div class="widget-content" >
                     
 		    <a href="registrar" class="btn btn-success mb-1">Registrar</a>
+		    <a href="tipo" class="btn btn-secondary mb-1 ml-5">Tipos de cursos</a>
+		    <a href="registrar" class="btn btn-info mb-1">Categorias de cursos</a>
+		    <a href="registrar" class="btn btn-dark mb-1">Naturalezas de cursos</a>		    
+
 		    <table class="table table-bordered table-striped">
 			<thead>
 			    <tr>
 				<th>ID</th>
-				<th>Perfil</th>
-				<th>Permisos</th>
+				<th>Curso</th>
+				<th>Tipo</th>
+				<th>Categoria</th>
+				<th>Naturaleza</th>
 				<th colspan="2">Operaciones</th>
 			    </tr>
 			</thead>
 
 			<?php
 			if ($data["Estado"] == 200) {
-			    foreach($data["Detalles"] as $perfil) { ?>
+			    foreach($data["Detalles"] as $curso) { ?>
 			    <tbody>
 				<tr class="odd gradeX">
-				    <td><?php echo $perfil['idPerfil'] ?></td>
-				    <td><?php echo $perfil['perfil'] ?></td>
-				    <td>
-				      <?php
-                    $permisos = $m_permisos->traerDePerfil($perfil["idPerfil"], 1);
-                    foreach ($permisos as $permiso) {
-                        echo $permiso["modulo"]."<br>";
-                    }
-                               ?>
-                       </td>
-				    <td><a href="editar/<?= $perfil['idPerfil']?>" class="btn
+				    <td><?php echo $curso['idCurso']; ?></td>
+				    <td><?php echo $curso['curso']; ?></td>
+				    <td><?php echo $curso['tipo']; ?></td>
+				    <td><?php echo $curso['categoria']; ?></td>
+				    <td><?php echo $curso['naturaleza']; ?></td>
+				    <td><a href="editar/<?= $curso['idCurso']?>" class="btn
 						 btn-warning">Editar</a></td>
-				    <td><a href="eliminar/<?= $perfil['idPerfil']?>"
+				    <td><a href="eliminar/<?= $curso['idCurso']?>"
 					   class="btn btn-danger">Eliminar</a></td>
 				</tr>
 			    </tbody>
@@ -116,5 +104,6 @@ foreach ($perfiles as $perfil)
 </div>
 </div>
 <?php echo view("comun/pie"); ?>
+
 
 

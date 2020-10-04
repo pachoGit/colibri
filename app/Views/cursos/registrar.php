@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => base_url()."/index.php/perfiles/create",
+        CURLOPT_URL => base_url()."/index.php/cursos/create",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -16,15 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS =>
-        "perfil=".$_POST["perfil"],
+        "curso=".$_POST["curso"].
+        "&id_tipo=".$_POST["id_tipo"].
+        "&id_categoria=".$_POST["id_categoria"].
+        "&id_naturaleza=".$_POST["id_naturaleza"],
         CURLOPT_HTTPHEADER => array(
-	    $_SESSION["auth"],
+            $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
                                     ),
                                    ));
 
     $response = curl_exec($curl);
     curl_close($curl);
+
 
 
     // Puede que tengamos caracteres ocultos la final de la respuesta
@@ -34,71 +38,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         var_dump($data);die;
 	}
-
-    // Obtenemos el perfil recien guardado
-    $m_perfiles = new App\Models\ModeloPerfiles();
-    $perfiles = $m_perfiles->where("perfil", $_POST["perfil"])->findAll();
-    $perfil = $perfiles[0];
-    
-    // Insertamos el la tabla permisos
-    foreach ($_POST["permisos"] as $id_modulo)
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => base_url()."/index.php/permisos/create",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>
-            "id_perfil=".$perfil["idPerfil"].
-            "&id_modulo=".$id_modulo,
-            CURLOPT_HTTPHEADER => array(
-		$_SESSION["auth"],
-                "Content-Type: application/x-www-form-urlencoded",
-                                        ),
-                                       ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        // Puede que tengamos caracteres ocultos la final de la respuesta
-        $data = substr($response, 0, $_SESSION["tam"]);
-        $data = json_decode($data, true);
-        if ($data["Estado"] != 200)
-        {
-            var_dump($data);die;
-        }
-    }    
     // Redireccion
+
 }
 
 $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-         "titulo"  => "PERFILES",
+         "titulo"  => "CURSOS",
          "nombre"  => $_SESSION["nombres"],                                                                                                       
          "modulos" => $nmodulos];
 
 $casa->cargarCabeza($datos);
 
-// Traemos todos los modulos y submodulos
-$m_modulos = new App\Models\ModeloModulos();
-$todos_modulos = $m_modulos->traerModulos(1); // SESSION
+$m_cursos = new App\Models\ModeloCursos();
 
-$modulos = []; // Solo los modulos padres
-
-// Filtramos los modulos padres
-foreach ($todos_modulos as $tmodulo)
-{
-    if (is_null($tmodulo["id_moduloPadre"]))
-        array_push($modulos, $tmodulo);
-}
+// SESSION
+$tipos = $m_cursos->traerTiposCurso(1);
+$categorias = $m_cursos->traerCategoriasCurso(1);
+$naturalezas = $m_cursos->traerNaturalezasCurso(1);
 
 ?>
 
@@ -114,14 +73,14 @@ foreach ($todos_modulos as $tmodulo)
 	    <div class="row-fluid">
 		<div class="widget-box">
 		    <div class="widget-title bg_lg">
-			<h3>Registrar nuevo perfil de usuario</h3>
+			<h3>Registrar curso</h3>
 		    </div>
 		    <div class="widget-content" >
 			
-			<form  method="post" action="<?php base_url().'/index.php/perfiles/create'?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+			<form  method="post" action="<?php base_url().'/index.php/cursos/create'?>" class="needs-validation" novalidate>
 			    <div class="form-group">
-				<label for="perfil">Nombre del perfil</label>
-				<input type="text" class="form-control" name="perfil" id="perfil" required>
+				<label for="curso">Nombre del curso</label>
+				<input type="text" class="form-control" name="curso" id="curso" required>
 				<div class="valid-feedback">
 				    Esto est&aacute; bien
 				</div>
@@ -129,18 +88,37 @@ foreach ($todos_modulos as $tmodulo)
 				    Ingrese algo aqu&iacute;
 				</div>
 			    </div>
-			    <label for="permisos"> Elija los permisos del nuevo perfil </label>
-			    <?php foreach($modulos as $modulo): ?>
-			    <div class="form-check">
-			      <input class="form-check-input" type="checkbox" name="permisos[]" value="<?= $modulo["idModulo"];?>" id="permisos">
-			      <label class="form-check-label" for="permisos">
-				 <?= $modulo["modulo"]; ?>
-			      </label>
+
+			    <div class="form-row">
+				<div class="form-group col-md-4">
+				    <label for="id_tipo">Seleccione el tipo del curso</label>
+				    <select id="id_tipo" name="id_tipo" class="form-control" required>
+					<?php foreach ($tipos as $tipo): ?>
+					    <option value="<?= $tipo["idTipoCurso"]?>"> <?= $tipo["tipo"]; ?></option>
+					    <?php endforeach; ?> 
+				    </select>
+				</div>
+				<div class="form-group col-md-4">
+				    <label for="id_categoria">Seleccione la categoria del curso</label>
+				    <select id="id_categoria" name="id_categoria" class="form-control" required>
+					<?php foreach ($categorias as $categoria): ?>
+					    <option value="<?= $categoria["idCategoriaCurso"]?>"> <?= $categoria["categoria"]; ?></option>
+					    <?php endforeach; ?> 
+				    </select>
+				</div>
+				<div class="form-group col-md-4">
+				    <label for="id_naturaleza">Seleccione la naturaleza del curso</label>
+				    <select id="id_naturaleza" name="id_naturaleza" class="form-control" required>
+					<?php foreach ($naturalezas as $naturaleza): ?>
+					    <option value="<?= $naturaleza["idNaturaleza"]?>"> <?= $naturaleza["naturaleza"]; ?></option>
+					    <?php endforeach; ?> 
+				    </select>
+				</div>
+
 			    </div>
-			    <?php endforeach; ?>
 			    
 			    <button type="submit" class="btn btn-primary mt-3">Registrar</button>
-			    <a href="<?= base_url().'/index.php/perfiles/listar'; ?>" class="btn btn-danger mt-3"> Cancelar </a>
+			    <a href="<?= base_url().'/index.php/cursos/listar'; ?>" class="btn btn-danger mt-3"> Cancelar </a>
 
 			</form>
 			

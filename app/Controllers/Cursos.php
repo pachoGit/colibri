@@ -9,6 +9,29 @@ use App\Models\ModeloClientes;
 
 class Cursos extends Controller
 {
+    public function listar()
+    {
+        return view("cursos/listar");
+    }
+
+    public function registrar()
+    {
+        return view("cursos/registrar");
+    }
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("cursos/editar", $data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("cursos/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/cursos/listar");
+    }
+    
     public function index()
     {
         $cliente = 1;
@@ -68,9 +91,9 @@ class Cursos extends Controller
             $curso = $modeloCursos->traerPorId($id, $cliente);
             if (empty($curso))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El curso que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El curso que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $curso]);
+            return json_encode(["Estado" => 200, "Detalles" => $curso]);
         }
         return json_encode($error);
     }

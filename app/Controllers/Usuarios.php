@@ -12,7 +12,7 @@ class Usuarios extends BaseController
     // De esta funcion se le envia a la vista de listar
     public function listar()
     {
-        echo view("usuarios/listar");
+        return view("usuarios/listar");
     }
 
     public function registrar()

@@ -27,6 +27,12 @@ class Home extends BaseController
         $_SESSION["id_perfil"]  = $usuario["id_perfil"];
         $_SESSION["id_cliente"] = $usuario["id_cliente"];
         $_SESSION["correo"]     = $usuario["correo"];
+        $_SESSION["rutaFoto"]   = $usuario["rutaFoto"];
+        // Necesarios
+        // Edite estas 3 variables globales de acuerdo a su disposicion
+        $_SESSION["auth"] = "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==";
+        $_SESSION["tam"] = -266; // Para eliminar lo que trae cURL
+        $_SESSION["ruta"] = "/var/www/html/colibri/public/"; // Cambio de la ruta para las fotos
 
         $perfiles = new \App\Models\ModeloPerfiles();
         $perfil = $perfiles->traerPorId($usuario["id_perfil"], $usuario["id_cliente"]);
@@ -37,6 +43,11 @@ class Home extends BaseController
 
         return redirect()->to(base_url()."/index.php/casa");
 
+    }
+
+    public function autorizacion()
+    {
+        echo view("autorizacion");
     }
 
 	//--------------------------------------------------------------------
