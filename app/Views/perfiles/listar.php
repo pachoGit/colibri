@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+//namespace App\Controllers;
 
 $curl = curl_init();
 
@@ -27,7 +27,7 @@ $data = substr($response, 0, -266);
 $data = json_decode($data, true);
 
 session_start();
-$casa = new Casa();
+$casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
@@ -39,11 +39,11 @@ $casa->cargarCabeza($datos);
 
 
 
-$m_perfiles = new App\Models\ModeloPerfiles();
-
-/*
 
 $m_permisos = new App\Models\ModeloPermisos();
+/*
+
+$m_perfiles = new App\Models\ModeloPerfiles();
 $perfiles = $m_perfiles->traerPerfiles(1); // SESSION
 
 foreach ($perfiles as $perfil)
@@ -89,12 +89,13 @@ foreach ($perfiles as $perfil)
 				    <td><?php echo $perfil['idPerfil'] ?></td>
 				    <td><?php echo $perfil['perfil'] ?></td>
 				    <td>
-				      <?php foreach ($modulos as $modulo) 
-				       {
-				       echo $modulo["modulo"]."<br>";
-								 }
-								 ?>
-								 </td>
+				      <?php
+                    $permisos = $m_permisos->traerDePerfil($perfil["idPerfil"], 1);
+                    foreach ($permisos as $permiso) {
+                        echo $permiso["modulo"]."<br>";
+                    }
+                               ?>
+                       </td>
 				    <td><a href="editar/<?= $perfil['idPerfil']?>" class="btn
 						 btn-warning">Editar</a></td>
 				    <td><a href="eliminar/<?= $perfil['idPerfil']?>"
