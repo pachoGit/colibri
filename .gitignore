@@ -2,6 +2,7 @@
 # Operating Specific Junk Files
 #-------------------------
 
+app/Controllers/Home.php
 # OS X
 .DS_Store
 .AppleDouble

@@ -8,6 +8,29 @@ use App\Models\ModeloGrados;
 
 class Grados extends Controller
 {
+     public function listar()
+    {
+        return view("grados/listar");
+    }
+
+    public function registrar()
+    {
+        return view("grados/registrar");
+    }
+    // Funciona 
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("grados/editar", $data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("grados/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/grados/listar");
+    }
     public function index()
     {
         $cliente = 1;
@@ -67,9 +90,9 @@ class Grados extends Controller
             $grado = $modeloGrados->traerPorId($id, $cliente);
             if (empty($grado))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El grado que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El grado que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $grado]);
+            return json_encode(["Estado" => 200, "Detalles" => $grado]);
         }
         return json_encode($error);
     }
@@ -115,17 +138,17 @@ class Grados extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $grado = $modeloGrados->where(["estado"     => 1,
                                            "id_cliente" => $cliente,
                                            "grado"      => $datos["grado"]])->findAll();
             if (!empty($grado))
-                return json_encode(["Estado" => 404, "Detalle" => "Este grado ya existe"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Este grado ya existe"], true);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloGrados->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del grado guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del grado guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -169,14 +192,14 @@ class Grados extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $grado = $modeloGrados->where("estado", 1)->find($id);
             if (empty($grado))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el grado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el grado"], true);
             $modeloGrados->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del grado actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del grado actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -210,11 +233,11 @@ class Grados extends Controller
             $modeloGrados = new ModeloGrados();
             $grado = $modeloGrados->where("estado", 1)->find($id);
             if (empty($grado))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el grado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el grado"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
             $modeloGrados->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del grado eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del grado eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

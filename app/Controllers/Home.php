@@ -30,9 +30,9 @@ class Home extends BaseController
         $_SESSION["rutaFoto"]   = $usuario["rutaFoto"];
         // Necesarios
         // Edite estas 3 variables globales de acuerdo a su disposicion
-        $_SESSION["auth"] = "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==";
-        $_SESSION["tam"] = -266; // Para eliminar lo que trae cURL
-        $_SESSION["ruta"] = "/var/www/html/colibri/public/"; // Cambio de la ruta para las fotos
+        $_SESSION["auth"] = "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VoRlJEWFhwOFRtSVhVcTE3dnVSejUxbk81cU1UeEd5Om8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlcHJyNEFxR0JiRWwzVS5lenNuUXlnUUk2THhKaGcxQw==";
+        $_SESSION["tam"] = -274; // Para eliminar lo que trae cURL
+        $_SESSION["ruta"] = "C:\\xampp\\htdocs\\colibri\\public\\"; // Cambio de la ruta para las fotos
 
         $perfiles = new \App\Models\ModeloPerfiles();
         $perfil = $perfiles->traerPorId($usuario["id_perfil"], $usuario["id_cliente"]);
