@@ -92,7 +92,7 @@ $casa->cargarCabeza($datos);
 				</div>
 			
 			    <button type="submit" class="btn btn-primary">Registrar</button>
-			    <a href="<?php base_url().'/index.php/grados/listar'?>" class="btn btn-danger">Cancelar</a>
+			    <a href="<?php echo base_url().'/index.php/grados/listar'?>" class="btn btn-danger">Cancelar</a>
 			</form>
 			
 		    </div>
