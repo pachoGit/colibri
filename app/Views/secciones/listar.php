@@ -87,12 +87,11 @@ $casa->cargarCabeza($datos);
 			<thead>
 			    <tr>
 				<th>ID</th>
-				<th>Nombres</th>
+				<th>Secci&oacute;n</th>
 				<th>Grado</th>
 				<th>Fecha Creación</th>
-				<th>Fecha Eliminación</th>
 				<th>Cliente</th>
-				<th colspan="3">Operaciones</th>
+				<th colspan="2">Operaciones</th>
 			    </tr>
 			</thead>
 
@@ -105,7 +104,6 @@ $casa->cargarCabeza($datos);
 				    <td><?php echo $seccion['seccion']; ?></td>
 				    <td><?php echo $seccion['grado']; ?></td>
 				    <td><?php echo $seccion['fechaCreacion']; ?></td>
-				    <td><?php echo $seccion['fechaElim']; ?></td>
 				    <td><?php echo $seccion['id_cliente']; ?></td>
 				    <td><a href="editar/<?= $seccion['idSeccion']?>" class="btn
 						 btn-warning">Editar</a></td>
