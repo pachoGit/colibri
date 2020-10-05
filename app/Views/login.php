@@ -31,7 +31,7 @@
     <link href="<?= base_url().'/public/ayudas/signin.css'; ?>" rel="stylesheet">
   </head>
   <body class="text-center">
-      <form action="index.php/home/login" method="post" class="form-signin">
+      <form action="<?= base_url().'/index.php/home/login' ?>" method="post" class="form-signin">
 	  <img class="mb-4" src="<?= base_url().'/public/media/colibri.jpg'; ?>" alt="" width="72" height="72">
 	  <h1 class="h3 mb-3 font-weight-normal">Iniciar Sesión</h1>
 	  <label for="correo" class="sr-only">Correo Electrónico</label>
