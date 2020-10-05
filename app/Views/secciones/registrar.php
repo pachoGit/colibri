@@ -1,8 +1,5 @@
 <?php
 session_start();
-//namespace App\Controllers;
-//use CodeIgniter\HTTP\Files\UploadedFile;
-//use CodeIgniter\HTTP\Files\FileCollection;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
@@ -47,10 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     
 }
-//if (session_start() == false)
-//{
-   // session_start();
-//}
 
 
 $casa = new App\Controllers\Casa();
@@ -109,6 +102,7 @@ $casa->cargarCabeza($datos);
 				</div>
 			    </div>
 			    <button type="submit" class="btn btn-primary">Registrar</button>
+			    <a href="<?= base_url().'/index.php/secciones/listar'; ?>" class="btn btn-danger"> Cancelar </a>			    
 			</form>
 			
 		    </div>
