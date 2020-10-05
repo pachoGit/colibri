@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $response = curl_exec($curl);
     curl_close($curl);
 
-    $data = substr($response, 0, -266);
+    $data = substr($response, 0, -274);
     $data = json_decode($data, true);
 
     if ($data["Estado"] != 200)
