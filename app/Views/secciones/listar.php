@@ -103,7 +103,7 @@ $casa->cargarCabeza($datos);
 				<tr class="odd gradeX">
 				    <td><?php echo $seccion['idSeccion']; ?></td>
 				    <td><?php echo $seccion['seccion']; ?></td>
-				    <td><?php echo $seccion['id_grado']; ?></td>
+				    <td><?php echo $seccion['grado']; ?></td>
 				    <td><?php echo $seccion['fechaCreacion']; ?></td>
 				    <td><?php echo $seccion['fechaElim']; ?></td>
 				    <td><?php echo $seccion['id_cliente']; ?></td>
