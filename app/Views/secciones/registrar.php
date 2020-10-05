@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => "http://localhost/colibri/index.php/secciones/create",
+        CURLOPT_URL => base_url()."/index.php/secciones/create",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "&id_grado=".$_POST["id_grado"].
         "&id_cliente=1",
         CURLOPT_HTTPHEADER => array(
-            "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
+            $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
                                     ),
                                    ));
@@ -77,7 +77,7 @@ $casa->cargarCabeza($datos);
 	    <div class="row-fluid">
 		<div class="widget-box">
 		    <div class="widget-title bg_lg">
-			<h3>Registrar nuevo alumno</h3>
+			<h3>Registrar nueva sección</h3>
 		    </div>
 		    <div class="widget-content" >
 			

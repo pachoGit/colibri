@@ -8,7 +8,7 @@ session_start();
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://localhost/colibri/index.php/secciones",
+  CURLOPT_URL => base_url()."/index.php/secciones",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
