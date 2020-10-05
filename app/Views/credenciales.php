@@ -20,7 +20,7 @@
 	<p> Cliente      : <?= $data["cliente_id"]; ?></p>
 	<p> Llave secreta: <?= $data["llave_secreta"]; ?></p>	
 	<hr>
-	<p class="mb-0">Con estas credenciales usted podr&aacute; utilizar nuestro sistema <a href="<?= base_url() ?>" class="alert-link">Colibri </a> </p>
+	<p class="mb-0">Con estas credenciales usted podr&aacute; utilizar nuestro sistema <a href="<?= base_url().'/index.php/home/iniciar'; ?>" class="alert-link">Colibri </a> </p>
     </div>
 
 </body>
