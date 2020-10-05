@@ -8,8 +8,39 @@ use App\Models\ModeloClientes;
 use App\Models\ModeloSecciones;
 use App\Models\ModeloGrados;
 
+
 class Secciones extends Controller
 {
+    public function listar(){
+        return view ("secciones/listar");
+    }
+    public function registrar()
+    {
+        $m_grados = new ModeloGrados();
+        $grados = $m_grados->traerGrados(1); // Reemplazar por la variable SESSION
+        $data = ["grados" => $grados];
+        return view("secciones/registrar", $data);
+        return redirect()->to(base_url()."/index.php/secciones/listar");
+    }
+    public function editar($id)
+    {
+        $m_secciones = new ModeloSecciones();
+        $m_grados = new ModeloGrados();
+
+        $grados = $m_grados->traerGrados(1); // SESSION
+        $seccion = $m_secciones->traerPorId($id, 1); // El SESSION
+        $mi_grado = $seccion[0]["grado"];
+        $data = ["mi_grado" => $mi_grado,
+                 "id"        => $id,
+                 "grados"  => $grados];
+        return view("secciones/editar", $data);
+    }
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("secciones/eliminar", $data);
+        return redirect()->to(base_url()."/index.php/secciones/listar");
+    }
     public function index()
     {
         $cliente = 1;
@@ -71,7 +102,7 @@ class Secciones extends Controller
             {
                 return json_encode(["Estado" => 404, "Detalle" => "La seccion que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $seccion]);
+            return json_encode(["Estado" => 200, "Detalles" => $seccion]);
         }
         return json_encode($error);
     }
@@ -140,7 +171,7 @@ class Secciones extends Controller
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloSecciones->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del seccion guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del seccion guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
