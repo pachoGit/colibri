@@ -114,6 +114,7 @@ $data = $data[0];
 			      Ingrese algo aqu&iacute;
 			    </div>
 			</div>
+			
 			<div class="form-row">
 			    <div class="form-group col-md-9">
 				<label for="estudios">Estudios</label>
@@ -125,6 +126,7 @@ $data = $data[0];
 				  Ingrese algo aqu&iacute;
 				</div>
 			    </div>
+
 			    <div class="form-group col-md-3">
 				<label for="edad">Edad</label>
 				<input type="number" class="form-control" name="edad" id="edad" value="<?= $data["edad"]; ?>" readonly>
@@ -134,6 +136,16 @@ $data = $data[0];
 				<div class="invalid-feedback">
 				  Ingrese un n&uacute;mero natural
 				</div>
+			    </div>
+			</div>
+			<div class="form-group">
+			    <label for="inputAddress">Fecha de creaci&oacute;n</label>
+			    <input type="text" class="form-control" name="direccion" value="<?= $data["fechaCreacion"]; ?>" id="inputAddress"  readonly>
+			    <div class="valid-feedback">
+			      Esto est&aacute; bien
+			    </div>
+			    <div class="invalid-feedback">
+			      Ingrese algo aqu&iacute;
 			    </div>
 			</div>
 

@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         var_dump($data);die;
 	}
-
+    // Redireccion
 }
 
 $casa = new App\Controllers\Casa();
