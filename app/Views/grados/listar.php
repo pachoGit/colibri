@@ -33,7 +33,7 @@ $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-         "titulo"  => "ALUMNOS",                                                                                                                   
+         "titulo"  => "GRADOS",                                                                                                                   
          "nombre"  => $_SESSION["nombres"],                                                                                                       
          "modulos" => $nmodulos];
 
