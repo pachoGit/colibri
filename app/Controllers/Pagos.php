@@ -7,10 +7,32 @@ use App\Models\ModeloRegistros;
 use App\Models\ModeloClientes;
 use App\Models\ModeloAlumnos;
 use App\Models\ModeloPagos;
+use App\Models\ModeloMotivoPago;
 
 class Pagos extends Controller
 {
-    public function index()
+    
+    public function listar_alumnos()
+    {
+        return view("pagos/alumnos/listar");
+    }
+    
+    public function registrar_alumno()
+    {
+        session_start();
+        
+        $m_alumnos = new ModeloAlumnos();
+        $m_motivos = new ModeloMotivoPago();
+        
+        $alumnos = $m_alumnos->traerAlumnos($_SESSION["id_cliente"]);
+        $motivos = $m_motivos->traerMotivoPago($_SESSION["id_cliente"]);
+        
+        $data = ["alumnos" => $alumnos, "motivos" => $motivos];
+        return view("pagos/alumnos/registrar", $data);
+        return redirect()->to(base_url()."/index.php/pagos/listar_alumnos");
+    }
+
+    public function index_alumnos()
     {
         $cliente = 1;
         $solictud = \Config\Services::request();
@@ -34,7 +56,7 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pagos = $modeloPagos->traerPagos($cliente);
+            $pagos = $modeloPagos->traerPagosAlumnos($cliente);
             if (empty($pagos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
             return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
@@ -42,7 +64,7 @@ class Pagos extends Controller
         return json_encode($error, true);
     }
 
-    public function show($id)
+    public function show_alumno($id)
     {
         $cliente = 1;
         $solictud = \Config\Services::request();
@@ -66,16 +88,85 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pago = $modeloPagos->traerPorId($id, $cliente);
+            $pago = $modeloPagos->traerPorIdAlumno($id, $cliente);
             if (empty($pago))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El pago que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $pago]);
+            return json_encode(["Estado" => 200, "Detalles" => $pago]);
         }
         return json_encode($error);
     }
 
+
+    public function index_profesores()
+    {
+        $cliente = 1;
+        $solictud = \Config\Services::request();
+        $validacion =\Config\Services::validation();
+        $cabecera = $solictud->getHeaders();
+        $modeloRegistros = new ModeloRegistros();
+
+        $registros = $modeloRegistros->where("estado", 1)->findAll();
+
+        foreach ($registros as $clave => $valor)
+        {
+            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
+                continue;
+            }
+            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
+            if ($cabecera["Authorization"] != $autorizacion)
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
+                continue;
+            }
+            $modeloPagos = new ModeloPagos();
+            $pagos = $modeloPagos->traerPagosProfesores($cliente);
+            if (empty($pagos))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
+            return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
+        }
+        return json_encode($error, true);
+    }
+
+    public function show_profesor($id)
+    {
+        $cliente = 1;
+        $solictud = \Config\Services::request();
+        $validacion =\Config\Services::validation();
+        $cabecera = $solictud->getHeaders();
+        $modeloRegistros = new ModeloRegistros();
+
+        $registros = $modeloRegistros->where("estado", 1)->findAll();
+
+        foreach ($registros as $clave => $valor)
+        {
+            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
+                continue;
+            }
+            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
+            if ($cabecera["Authorization"] != $autorizacion)
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
+                continue;
+            }
+            $modeloPagos = new ModeloPagos();
+            $pago = $modeloPagos->traerPorIdProfesor($id, $cliente);
+            if (empty($pago))
+            {
+                return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
+            }
+            return json_encode(["Estado" => 200, "Detalles" => $pago]);
+        }
+        return json_encode($error);
+    }
+
+
+    
     public function create()
     {
         $cliente = 1;
@@ -103,8 +194,11 @@ class Pagos extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["id_perfil"  => $solicitud->getVar("id_perfil"),
-                      "id_modulo"  => $solicitud->getVar("id_modulo"),
+            $datos = ["id_alumno"  => $solicitud->getVar("id_alumno"),
+                      "id_profesor"  => $solicitud->getVar("id_profesor"),
+                      "id_motivo"  => $solicitud->getVar("id_motivo"),
+                      "fechaPago"  => $solicitud->getVar("fechaPago"),
+                      "monto"  => $solicitud->getVar("monto"),
                       "id_cliente" => $cliente];
             if (empty($datos))
             {
@@ -117,26 +211,37 @@ class Pagos extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
-            $modeloPerfiles = new ModeloPerfiles();
-            $modeloModulos = new ModeloModulos();
+            $modeloMotivoPago = new ModeloMotivoPago();
+
             $correcto = $modeloClientes->traerPorId($cliente);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
-            $correcto = $modeloPerfiles->traerPorId($datos["id_perfil"], $cliente);
+            $correcto = $modeloMotivoPago->traerPorId($datos["id_motivo"], $cliente);
             if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el perfil"]);
-            $correcto = $modeloModulos->traerPorId($datos["id_modulo"], $cliente);
-            if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el modulo"]);
-
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el motivo de pago"]);
+            if (is_null($datos["id_alumno"]))
+            {
+                $modeloProfesores = new ModeloProfesores();
+                $correcto = $modeloProfesores->traerPorId($datos["id_profesor"], $cliente);
+                if (empty($correcto))
+                    return json_encode(["Estado" => 404, "Detalles" => "No existe el profesor"]);
+            }
+            else
+            {
+                $modeloAlumnos = new ModeloAlumnos();
+                $correcto = $modeloAlumnos->traerPorId($datos["id_alumno"], $cliente);
+                if (empty($correcto))
+                    return json_encode(["Estado" => 404, "Detalles" => "No existe el alumno"]);
+            }
+                
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloPagos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del pago guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del pago guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -182,19 +287,18 @@ class Pagos extends Controller
             // Insertamos los datos a la base de datos
             $pago = $modeloPagos->where("estado", 1)->find($id);
             if (empty($pago))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el pago"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el pago"], true);
 
-            $modeloPerfiles = new ModeloPerfiles();
-            $modeloModulos = new ModeloModulos();
+            $modeloMotivoPago = new ModeloMotivoPago();
             
-            $correcto = $modeloPerfiles->traerPorId($datos["id_perfil"], $pago["id_cliente"]);
+            $correcto = $modeloMotivoPago->traerPorId($datos["id_motivo"], $pago["id_cliente"]);
             if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el perfil"]);
-            $correcto = $modeloModulos->traerPorId($datos["id_modulo"], $pago["id_cliente"]);
-            if (empty($correcto))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe el modulo"]);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el motivo de pago"]);
+
+
+
             $modeloPagos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del pago actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del pago actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -231,7 +335,7 @@ class Pagos extends Controller
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloPagos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del pago eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del pago eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

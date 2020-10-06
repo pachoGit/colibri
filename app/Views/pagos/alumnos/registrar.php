@@ -1,15 +1,11 @@
 <?php
-session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-
-    //var_dump($_POST);
-    //var_dump($_FILES);die;
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => base_url()."/index.php/secciones/create",
+        CURLOPT_URL => base_url()."/index.php/pagos/create",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -18,11 +14,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS =>
-        "seccion=".$_POST["seccion"].
-        "&id_grado=".$_POST["id_grado"].
-        "&id_cliente=1",
+        "id_alumno=".$_POST["id_alumno"].
+        "&monto=".$_POST["monto"].
+        "&fechaPago=".$_POST["fechaPago"].
+        "&id_motivo=".$_POST["id_motivo"],
         CURLOPT_HTTPHEADER => array(
-            $_SESSION["auth"],
+	    $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
                                     ),
                                    ));
@@ -31,28 +28,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     curl_close($curl);
 
-
     // Puede que tengamos caracteres ocultos la final de la respuesta
     $data = substr($response, 0, $_SESSION["tam"]);
-    //$data = substr($response, 0, -269);
     $data = json_decode($data, true);
     if ($data["Estado"] != 200)
     {
         var_dump($data);die;
-	}
-    // Redireccion
-
-    
+    }
+    echo $data["Detalles"];
+    redirect()->back();
 }
-
 
 $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-         "titulo"  => "SECCIONES",
-         "nombre"  => $_SESSION["nombres"],                                                                                                       
-         "modulos" => $nmodulos];
+          "titulo"  => "PAGOS - ALUMNOS",
+          "nombre"  => $_SESSION["nombres"],                                                                                                       
+          "modulos" => $nmodulos];
 
 $casa->cargarCabeza($datos);
 
@@ -70,39 +63,56 @@ $casa->cargarCabeza($datos);
 	    <div class="row-fluid">
 		<div class="widget-box">
 		    <div class="widget-title bg_lg">
-			<h3>Registrar nueva sección</h3>
+			<h3>Registrar nuevo pago</h3>
 		    </div>
 		    <div class="widget-content" >
 			
-			<form  method="post" action="<?php base_url().'/index.php/secciones/create'?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+			<form  method="post" /*action="<?php base_url().'/index.php/usuarios/create'?>"*/ enctype="multipart/form-data" class="needs-validation" novalidate>
+			    <div class="form-group">
+				<label for="id_alumno">Seleccione a un alumno</label>
+				<select id="id_alumno" name="id_alumno" class="form-control" required>
+				    <?php foreach ($alumnos as $alumno):?>
+					<option value="<?= $alumno["idAlumno"]?>"> <?= $alumno["nombres"]." ".$alumno["apellidos"]; ?></option>
+				    <?php endforeach; ?> 
+				</select>
+			    </div>
+
 			    <div class="form-row">
 				<div class="form-group col-md-6">
-				    <label for="nombres">Grado</label>
-				    <select id="id_grado" name="id_grado" class="form-control" required>
-					<?php foreach ($grados as $grado): ?>
-					    <option value="<?= $grado["idGrado"]?>"> <?= $grado["grado"]; ?></option>
-					    <?php endforeach; ?> 
+				    <label for="id_motivo">Seleccione el motivo del pago</label>
+				    <select id="id_motivo" name="id_motivo" class="form-control" required>
+					<?php foreach ($motivos as $motivo): ?>
+					    <option value="<?= $motivo["idMotivo"]?>"> <?= $motivo["motivo"]; ?></option>
+					<?php endforeach; ?> 
 				    </select>
-				    <div class="valid-feedback">
-					Esto est&aacute; bien
-				    </div>
-				    <div class="invalid-feedback">
-					Ingrese su seccion
-				    </div>
 				</div>
+
 				<div class="form-group col-md-6">
-				    <label for="seccion">Sección</label>
-				    <input type="text" name="seccion" class="form-control" id="seccion" required>
+				    <label for="fechaPago">Fecha del pago</label>
+				    <input type="date" class="form-control" value="<?= date("Y-m-d");?>" name="fechaPago" id="fechaPago" required>
 				    <div class="valid-feedback">
 					Esto est&aacute; bien
 				    </div>
 				    <div class="invalid-feedback">
-					Ingrese su grado
+					Ingrese una fecha v&aacute;lida
 				    </div>
 				</div>
 			    </div>
+
+			    <div class="form-group">
+				<label for="monto">Ingrese el monto</label>
+				<input type="number" step="0.01" class="form-control" name="monto" id="monto"  required>
+				<div class="valid-feedback">
+				    Esto est&aacute; bien
+				</div>
+				<div class="invalid-feedback">
+				    Ingrese un monto;
+				</div>
+			    </div>
+			    
+
 			    <button type="submit" class="btn btn-primary">Registrar</button>
-			    <a href="<?= base_url().'/index.php/secciones/listar'; ?>" class="btn btn-danger"> Cancelar </a>			    
+                            <a href="<?= base_url().'/index.php/pagos/listar_alumnos'; ?>" class="btn btn-danger"> Cancelar </a>
 			</form>
 			
 		    </div>

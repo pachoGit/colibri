@@ -160,7 +160,7 @@ class Profesores extends Controller
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloProfesores->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del profesor guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del profesor guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
