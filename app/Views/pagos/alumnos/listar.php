@@ -84,11 +84,11 @@ $casa->cargarCabeza($datos);
 				    <td><?php echo $pago['monto']; ?></td>
 				    <td><?php echo $pago['fechaPago']; ?></td>
 				    <td><?php echo $pago['motivo']; ?></td>
-				    <td><a href="ver/<?= $pago['idPago']?>" class="btn
+				    <td><a href="ver_alumno/<?= $pago['idPago']?>" class="btn
 						 btn-secondary">Ver</a></td>
-				    <td><a href="editar/<?= $pago['idPago']?>" class="btn
+				    <td><a href="editar_alumno/<?= $pago['idPago']?>" class="btn
 						 btn-warning">Editar</a></td>
-				    <td><a href="eliminar/<?= $pago['idPago']?>"
+				    <td><a href="eliminar_alumno/<?= $pago['idPago']?>"
 					   class="btn btn-danger">Eliminar</a></td>
 				</tr>
 			    </tbody>

@@ -5,21 +5,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => base_url()."/index.php/pagos/create",
+        CURLOPT_URL => base_url()."/index.php/pagos/update/".$_POST["idPago"],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_CUSTOMREQUEST => "PUT",
         CURLOPT_POSTFIELDS =>
-        "id_alumno=".$_POST["id_alumno"].
-        "&monto=".$_POST["monto"].
+        "monto=".$_POST["monto"].
         "&fechaPago=".$_POST["fechaPago"].
         "&id_motivo=".$_POST["id_motivo"],
         CURLOPT_HTTPHEADER => array(
 	    $_SESSION["auth"],
+            "Content-Type: application/x-www-form-urlencoded",
+                                    ),
+                                   ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    // Puede que tengamos caracteres ocultos la final de la respuesta
+    $data = substr($response, 0, $_SESSION["tam"]);
+    $data = json_decode($data, true);
+
+    $mensaje = $data["Detalles"];
+    // Redireccion despues de insertar
+    echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumnos';</script>";
+    return;
+}
+else
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => base_url()."/index.php/pagos/show_alumno/".$id,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
                                     ),
                                    ));
@@ -33,15 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $data = json_decode($data, true);
     if ($data["Estado"] != 200)
     {
-	$mensaje = $data["Detalles"];
-	echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/registrar_alumno';</script>";
+        $mensaje = $data["Detalles"];
+        echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumno';</script>";
     }
-    $mensaje = $data["Detalles"];
-    // Redireccion despues de insertar
-    echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumnos';</script>";
-    //echo "<script> window.location.href='".base_url()."/index.php/pagos/listar_alumnos'; </script>";
-    //echo "<script> $(document).ready(function(){ $('#mimodal').modal('show'); });</script>";
-    //echo "<script> $('#mimodal').modal('show'); </script>";
+    $data = $data["Detalles"][0];
 }
 
 $casa = new App\Controllers\Casa();
@@ -72,13 +97,12 @@ $casa->cargarCabeza($datos);
 		    </div>
 		    <div class="widget-content" >
 			
-			<form  method="post" /*action="<?php base_url().'/index.php/usuarios/create'?>"*/ enctype="multipart/form-data" class="needs-validation" novalidate>
+			<form  method="post" /*action="<?php base_url().'/index.php/usuarios/create'?>"*/  class="needs-validation" novalidate>
+                            <input type="hidden" name="idPago" value="<?= $data["idPago"]; ?>"> </input>
 			    <div class="form-group">
 				<label for="id_alumno">Seleccione a un alumno</label>
-				<select id="id_alumno" name="id_alumno" class="form-control" required>
-				    <?php foreach ($alumnos as $alumno):?>
-					<option value="<?= $alumno["idAlumno"]?>"> <?= $alumno["nombres"]." ".$alumno["apellidos"]; ?></option>
-				    <?php endforeach; ?> 
+				<select id="id_alumno" name="id_alumno" class="form-control" disabled>
+					<option value="<?= $data["id_alumno"]; ?>"> <?= $data["nombres"]." ".$data["apellidos"]; ?></option>
 				</select>
 			    </div>
 
@@ -87,14 +111,14 @@ $casa->cargarCabeza($datos);
 				    <label for="id_motivo">Seleccione el motivo del pago</label>
 				    <select id="id_motivo" name="id_motivo" class="form-control" required>
 					<?php foreach ($motivos as $motivo): ?>
-					    <option value="<?= $motivo["idMotivo"]?>"> <?= $motivo["motivo"]; ?></option>
+					    <option <?php if ($motivo["idMotivo"] == $data["id_motivo"]) { echo "selected"; }?> value="<?= $motivo["idMotivo"]?>"> <?= $motivo["motivo"]; ?></option>
 					<?php endforeach; ?> 
 				    </select>
 				</div>
 
 				<div class="form-group col-md-6">
 				    <label for="fechaPago">Fecha del pago</label>
-				    <input type="date" class="form-control" value="<?= date("Y-m-d");?>" name="fechaPago" id="fechaPago" required>
+				    <input type="date" class="form-control" value="<?= $data["fechaPago"];?>" name="fechaPago" id="fechaPago" required>
 				    <div class="valid-feedback">
 					Esto est&aacute; bien
 				    </div>
@@ -106,7 +130,7 @@ $casa->cargarCabeza($datos);
 
 			    <div class="form-group">
 				<label for="monto">Ingrese el monto</label>
-				<input type="number" step="0.01" class="form-control" name="monto" id="monto"  required>
+				<input type="number" step="0.01" class="form-control" value="<?= $data["monto"];?>" name="monto" id="monto"  required>
 				<div class="valid-feedback">
 				    Esto est&aacute; bien
 				</div>
@@ -114,9 +138,8 @@ $casa->cargarCabeza($datos);
 				    Ingrese un monto;
 				</div>
 			    </div>
-			    
 
-			    <button  type="submit" class="btn btn-primary">Registrar</button>
+			    <button type="submit" class="btn btn-primary">Guardar</button>
                             <a href="<?= base_url().'/index.php/pagos/listar_alumnos'; ?>" class="btn btn-danger"> Cancelar </a>
 			</form>
 			
@@ -129,26 +152,6 @@ $casa->cargarCabeza($datos);
 	<hr/>
     </div>
 </main>
-
-<div class="modal fade modal-dialog modal-dialog-centered" id="mimodal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 </div>

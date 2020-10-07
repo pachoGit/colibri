@@ -20,7 +20,6 @@ class Pagos extends Controller
     public function registrar_alumno()
     {
         session_start();
-        
         $m_alumnos = new ModeloAlumnos();
         $m_motivos = new ModeloMotivoPago();
         
@@ -29,8 +28,86 @@ class Pagos extends Controller
         
         $data = ["alumnos" => $alumnos, "motivos" => $motivos];
         return view("pagos/alumnos/registrar", $data);
-        return redirect()->to(base_url()."/index.php/pagos/listar_alumnos");
     }
+
+    public function ver_alumno($id)
+    {
+        session_start();
+        $data = ["id" => $id];
+
+        return view("pagos/alumnos/ver", $data);
+    }
+
+    public function editar_alumno($id)
+    {
+        session_start();
+
+        $m_motivos = new ModeloMotivoPago();
+        $motivos = $m_motivos->traerMotivoPago($_SESSION["id_cliente"]);
+        
+        $data = ["id" => $id, "motivos" => $motivos];
+
+        return view("pagos/alumnos/editar", $data);
+    }
+
+    public function eliminar_alumno($id)
+    {
+        session_start();
+
+        $data = ["id" => $id];
+        echo view("pagos/alumnos/eliminar", $data);
+    }
+
+
+
+    public function listar_profesores()
+    {
+        return view("pagos/profesores/listar");
+    }
+    
+    public function registrar_profesor()
+    {
+        session_start();
+        $m_profesores = new ModeloProfesores();
+        $m_motivos = new ModeloMotivoPago();
+        
+        $profesores = $m_profesores->traerProfesores($_SESSION["id_cliente"]);
+        $motivos = $m_motivos->traerMotivoPago($_SESSION["id_cliente"]);
+        
+        $data = ["profesores" => $profesores, "motivos" => $motivos];
+        return view("pagos/profesores/registrar", $data);
+    }
+
+    public function ver_profesor($id)
+    {
+        session_start();
+        $data = ["id" => $id];
+
+        return view("pagos/profesores/ver", $data);
+    }
+
+    public function editar_profesor($id)
+    {
+        session_start();
+
+        $m_motivos = new ModeloMotivoPago();
+        $motivos = $m_motivos->traerMotivoPago($_SESSION["id_cliente"]);
+        
+        $data = ["id" => $id, "motivos" => $motivos];
+
+        return view("pagos/profesores/editar", $data);
+    }
+
+    public function eliminar_profesor($id)
+    {
+        session_start();
+
+        $data = ["id" => $id];
+        echo view("pagos/profesores/eliminar", $data);
+    }
+
+
+    
 
     public function index_alumnos()
     {
@@ -282,7 +359,7 @@ class Pagos extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $pago = $modeloPagos->where("estado", 1)->find($id);
@@ -330,7 +407,7 @@ class Pagos extends Controller
             $modeloPagos = new ModeloPagos();
             $pago = $modeloPagos->where("estado", 1)->find($id);
             if (empty($pago))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el pago"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el pago"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos

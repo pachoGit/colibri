@@ -195,7 +195,7 @@ $data = $data[0];
 			    </div>
 			</div>
 			-->
-			<a href="<?= base_url().'/index.php/alumnos/listar'?>" class="btn btn-primary">Atras</a>
+			<a href="<?= base_url().'/index.php/alumnos/listar'?>" class="btn btn-primary"> Volver </a>
 		    </form>
 		    
 		</div>

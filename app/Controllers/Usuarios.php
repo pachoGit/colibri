@@ -21,7 +21,6 @@ class Usuarios extends BaseController
         $perfiles = $m_perfiles->traerPerfiles(1); // Reemplazar por la variable SESSION
         $data = ["perfiles" => $perfiles];
         return view("usuarios/registrar", $data);
-        return redirect()->to(base_url()."/index.php/usuarios/listar");
     }
 
     public function ver($id)
@@ -52,7 +51,6 @@ class Usuarios extends BaseController
     {
         $data = ["id" => $id];
         echo view("usuarios/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/usuarios/listar");
     }
     
     public function index()
@@ -170,22 +168,22 @@ class Usuarios extends BaseController
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $modeloPerfiles = new ModeloPerfiles();
 
             $perfil = $modeloPerfiles->where("estado", 1)->find($datos["id_perfil"]);
             if (empty($perfil))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe ese perfil"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe ese perfil"], true);
 
             $usuario = $modeloUsuarios->where(["estado" => 1, "correo" => $datos["correo"], "id_cliente" => $cliente])->findAll();
             if (!empty($usuario))
-                return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Ya existe este correo"], true);
 
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloUsuarios->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del usuario guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del usuario guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -229,25 +227,25 @@ class Usuarios extends BaseController
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $modeloPerfiles = new ModeloPerfiles();
 
             $perfil = $modeloPerfiles->where("estado", 1)->find($datos["id_perfil"]);
             if (empty($perfil))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe ese perfil"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe ese perfil"], true);
 
             // Insertamos los datos a la base de datos
             $usuario = $modeloUsuarios->where("estado", 1)->find($id);
             if (empty($usuario))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el usuario"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el usuario"], true);
 
             $usuario = $modeloUsuarios->where("correo", $datos["correo"])->findAll();
             if (!empty($usuario) and ($usuario[0]["idUsuario"] != $id))
-                return json_encode(["Estado" => 404, "Detalle" => "Ya existe este correo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Ya existe este correo"], true);
 
             $modeloUsuarios->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del usuario actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del usuario actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -281,11 +279,11 @@ class Usuarios extends BaseController
             $modeloUsuarios = new ModeloUsuarios();
             $usuario = $modeloUsuarios->where("estado", 1)->find($id);
             if (empty($usuario))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el usuario"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el usuario"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloUsuarios->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del usuario eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del usuario eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

@@ -5,7 +5,7 @@
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/usuarios/delete/".$id,
+    CURLOPT_URL => base_url()."/index.php/pagos/delete/".$id,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -19,14 +19,13 @@ curl_setopt_array($curl, array(
 ));
 
 $response = curl_exec($curl);
-
 curl_close($curl);
+
 $data = substr($response, 0, $_SESSION["tam"]);
 $data = json_decode($data, true);
 
 $mensaje = $data["Detalles"];
 
-echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/usuarios/listar';</script>";
+echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumnos';</script>";
 
 ?>
-

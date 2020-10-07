@@ -36,7 +36,6 @@ class Alumnos extends Controller
     {
         $data = ["id" => $id];
         echo view("alumnos/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/alumnos/listar");
     }
 
     public function index()
@@ -154,12 +153,12 @@ class Alumnos extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloAlumnos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del alumno guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del alumno guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -203,14 +202,14 @@ class Alumnos extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $alumno = $modeloAlumnos->where("estado", 1)->find($id);
             if (empty($alumno))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el alumno"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el alumno"], true);
             $modeloAlumnos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del alumno actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del alumno actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -244,11 +243,11 @@ class Alumnos extends Controller
             $modeloAlumnos = new ModeloAlumnos();
             $alumno = $modeloAlumnos->where("estado", 1)->find($id);
             if (empty($alumno))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el alumno"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el alumno"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloAlumnos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del alumno eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del alumno eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

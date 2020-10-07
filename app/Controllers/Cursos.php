@@ -29,7 +29,6 @@ class Cursos extends Controller
     {
         $data = ["id" => $id];
         echo view("cursos/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/cursos/listar");
     }
     
     public function index()
@@ -141,7 +140,7 @@ class Cursos extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
@@ -163,12 +162,12 @@ class Cursos extends Controller
                                            "id_cliente" => $cliente,
                                            "curso"      => $datos["curso"]])->findAll();
             if (!empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "Este curso ya existe"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Este curso ya existe"], true);
 
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloCursos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del curso guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del curso guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -209,12 +208,12 @@ class Cursos extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $curso = $modeloCursos->where("estado", 1)->find($id);
             if (empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el curso"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el curso"], true);
             // Validamos si los datos son correctos
             $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], $curso["id_cliente"]);
             if (empty($correcto))
@@ -227,7 +226,7 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
             
             $modeloCursos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del curso actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del curso actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -259,12 +258,12 @@ class Cursos extends Controller
             $modeloCursos = new ModeloCursos();
             $curso = $modeloCursos->where("estado", 1)->find($id);
             if (empty($curso))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el curso"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el curso"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloCursos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del curso eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del curso eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

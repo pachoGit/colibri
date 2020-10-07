@@ -55,12 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     // Puede que tengamos caracteres ocultos la final de la respuesta
     $data = substr($response, 0, $_SESSION["tam"]);
     $data = json_decode($data, true);
-    if ($data["Estado"] != 200)
-    {
-        var_dump($data);die;
-	}
-    echo "Se edito correctamente | Arreglar la redireccion";
-    return redirect()->to(base_url()."/index.php/alumnos/listar");
+    $mensaje = $data["Detalles"];
+    echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/alumnos/listar';</script>";
+    return;
 }
 
 else

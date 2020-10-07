@@ -20,7 +20,6 @@ class Secciones extends Controller
         $grados = $m_grados->traerGrados(1); // Reemplazar por la variable SESSION
         $data = ["grados" => $grados];
         return view("secciones/registrar", $data);
-        return redirect()->to(base_url()."/index.php/secciones/listar");
     }
     public function editar($id)
     {
@@ -39,7 +38,6 @@ class Secciones extends Controller
     {
         $data = ["id" => $id];
         echo view("secciones/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/secciones/listar");
     }
     public function index()
     {
@@ -100,7 +98,7 @@ class Secciones extends Controller
             $seccion = $modeloSecciones->traerPorId($id, $cliente);
             if (empty($seccion))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "La seccion que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "La seccion que busca no esta registrado"], true);
             }
             return json_encode(["Estado" => 200, "Detalles" => $seccion]);
         }
@@ -148,7 +146,7 @@ class Secciones extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
@@ -166,7 +164,7 @@ class Secciones extends Controller
                                                 "seccion"    => $datos["seccion"],
                                                 "id_grado"   => $datos["id_grado"]])->findAll();
             if (!empty($seccion))
-                return json_encode(["Estado" => 404, "Detalle" => "Este seccion ya existe"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Este seccion ya existe"], true);
 
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
@@ -212,20 +210,20 @@ class Secciones extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $modeloGrados = new ModeloGrados();
             // Insertamos los datos a la base de datos
             $seccion = $modeloSecciones->where("estado", 1)->find($id);
             if (empty($seccion))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el seccion"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el seccion"], true);
             // Validamos si los datos son correctos
             $correcto = $modeloGrados->traerPorId($datos["id_grado"], $seccion["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el grado"]);
             
             $modeloSecciones->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del seccion actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del seccion actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -257,12 +255,12 @@ class Secciones extends Controller
             $modeloSecciones = new ModeloSecciones();
             $seccion = $modeloSecciones->where("estado", 1)->find($id);
             if (empty($seccion))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el seccion"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el seccion"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloSecciones->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del seccion eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del seccion eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

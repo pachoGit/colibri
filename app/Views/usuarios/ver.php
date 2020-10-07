@@ -140,8 +140,18 @@ $data = $data[0];
 					    <option> <?= $perfil; ?></option>
 				    </select>
 				</div>
-				
 			    </div>
+			    <div class="form-group">
+				<label for="fechaCreacion">Fecha de creaci&oacute;n</label>
+				<input type="date" class="form-control" name="fechaCreacion" id="fechaCreacion" value="<?= $data["fechaCreacion"]; ?>"  readonly>
+				<div class="valid-feedback">
+				    Esto est&aacute; bien
+				</div>
+				<div class="invalid-feedback">
+				    Ingrese algo aqu&iacute;
+				</div>
+			    </div>
+
 			    <div class="form-check form-check-inline form-group">
 				<input class="form-check-input" type="radio" name="sexo" id="masculino" <?php if ($data["sexo"] == "M") {echo "checked";} ?> value="M" disabled>
 				<label class="form-check-label" for="masculino">
@@ -167,7 +177,7 @@ $data = $data[0];
 				<label for="comentario">Comentario</label>
 				<textarea type="text" class="form-control" name="comentario" value="<?= $data["comentario"]; ?>" id="comentario" readonly> <?= $data["comentario"]; ?> </textarea>
 			    </div>
-                            <a href="<?= base_url().'/index.php/usuarios/listar'; ?>" class="btn btn-primary"> Aceptar </a>
+                            <a href="<?= base_url().'/index.php/usuarios/listar'; ?>" class="btn btn-primary"> Volver </a>
 			</form>
 			
 		    </div>

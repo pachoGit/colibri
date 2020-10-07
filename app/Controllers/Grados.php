@@ -29,7 +29,6 @@ class Grados extends Controller
     {
         $data = ["id" => $id];
         echo view("grados/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/grados/listar");
     }
     public function index()
     {

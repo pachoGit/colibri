@@ -29,14 +29,12 @@ class Profesores extends Controller
     {
         $data = ["id" => $id];
         return view("profesores/editar", $data);
-        //return redirect()->to(base_url()."/index.php/profesores/listar");
     }
 
     public function eliminar($id)
     {
         $data = ["id" => $id];
         echo view("profesores/eliminar", $data);
-        return redirect()->to(base_url()."/index.php/profesores/listar");
     }
     
     public function index()
@@ -155,7 +153,7 @@ class Profesores extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
@@ -204,14 +202,14 @@ class Profesores extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la ba[e de datos
             $profesor = $modeloProfesores->where("estado", 1)->find($id);
             if (empty($profesor))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el profesor"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el profesor"], true);
             $modeloProfesores->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del profesor actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del profesor actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -246,10 +244,10 @@ class Profesores extends Controller
             // Insertamos los datos a la base de datos
             $profesor = $modeloProfesores->where("estado", 1)->find($id);
             if (empty($profesor))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el profesor"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el profesor"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             $modeloProfesores->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del profesor eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del profesor eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);
