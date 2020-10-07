@@ -6,6 +6,7 @@ use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
 use App\Models\ModeloClientes;
 use App\Models\ModeloAlumnos;
+use App\Models\ModeloProfesores;
 use App\Models\ModeloPagos;
 use App\Models\ModeloMotivoPago;
 

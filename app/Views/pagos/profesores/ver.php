@@ -3,7 +3,7 @@
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/pagos/show_alumno/".$id,
+    CURLOPT_URL => base_url()."/index.php/pagos/show_profesor/".$id,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => "",
     CURLOPT_MAXREDIRS => 10,
@@ -27,7 +27,7 @@ $data = json_decode($data, true);
 if ($data["Estado"] != 200)
 {
     $mensaje = $data["Detalles"];
-    echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumno';</script>";
+    echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_profesor';</script>";
 }
 $data = $data["Detalles"][0];
 
@@ -36,7 +36,7 @@ $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-          "titulo"  => "PAGOS - ALUMNOS",
+          "titulo"  => "PAGOS - PROFESOR",
           "nombre"  => $_SESSION["nombres"],                                                                                                       
           "modulos" => $nmodulos];
 
@@ -62,9 +62,9 @@ $casa->cargarCabeza($datos);
 			
 			<form  method="post" /*action="<?php base_url().'/index.php/usuarios/create'?>"*/ enctype="multipart/form-data" class="needs-validation" novalidate>
 			    <div class="form-group">
-				<label for="id_alumno">Alumno</label>
-				<select id="id_alumno" name="id_alumno" class="form-control" disabled>
-					<option value="<?= $data["id_alumno"]?>"> <?= $data["nombres"]." ".$data["apellidos"]; ?></option>
+				<label for="id_profesor">Profesor</label>
+				<select id="id_profesor" name="id_profesor" class="form-control" disabled>
+					<option value="<?= $data["id_profesor"]?>"> <?= $data["nombres"]." ".$data["apellidos"]; ?></option>
 				</select>
 			    </div>
 
@@ -99,7 +99,7 @@ $casa->cargarCabeza($datos);
 				</div>
 			    </div>
 
-                            <a href="<?= base_url().'/index.php/pagos/listar_alumnos'; ?>" class="btn btn-primary"> Volver </a>
+                            <a href="<?= base_url().'/index.php/pagos/listar_profesores'; ?>" class="btn btn-primary"> Volver </a>
 			</form>
 			
 		    </div>
