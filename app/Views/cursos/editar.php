@@ -2,6 +2,12 @@
 
 session_start();
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     $curl = curl_init();
@@ -29,9 +35,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $response = curl_exec($curl);
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/cursos/listar';</script>";
     return;
@@ -50,16 +63,22 @@ else
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            $_SESSION["auth"]
+            $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
                                     ),
                                    ));
     $response = curl_exec($curl);
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
-
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $data = $data["Detalles"][0];
 
     $casa = new App\Controllers\Casa();
@@ -75,9 +94,9 @@ else
     $m_cursos = new App\Models\ModeloCursos();
 
     // SESSION
-    $tipos = $m_cursos->traerTiposCurso(1);
-    $categorias = $m_cursos->traerCategoriasCurso(1);
-    $naturalezas = $m_cursos->traerNaturalezasCurso(1);
+    $tipos = $m_cursos->traerTiposCurso($_SESSION["id_cliente"]);
+    $categorias = $m_cursos->traerCategoriasCurso($_SESSION["id_cliente"]);
+    $naturalezas = $m_cursos->traerNaturalezasCurso($_SESSION["id_cliente"]);
 }
 
 ?>

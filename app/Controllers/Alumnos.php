@@ -40,7 +40,6 @@ class Alumnos extends Controller
 
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -62,7 +61,7 @@ class Alumnos extends Controller
                 continue;
             }
             $modeloAlumnos = new ModeloAlumnos();
-            $alumnos = $modeloAlumnos->traerAlumnos($cliente);
+            $alumnos = $modeloAlumnos->traerAlumnos($_SERVER["HTTP_CLIENTE"]);
             if (empty($alumnos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $alumnos]);
             return json_encode(["Estado" => 200, "Total" => count($alumnos), "Detalles" => $alumnos]);
@@ -72,7 +71,6 @@ class Alumnos extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -94,7 +92,7 @@ class Alumnos extends Controller
                 continue;
             }
             $modeloAlumnos = new ModeloAlumnos();
-            $alumno = $modeloAlumnos->traerPorId($id, $cliente);
+            $alumno = $modeloAlumnos->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($alumno))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El alumno que busca no esta registrado"], true);
@@ -106,7 +104,6 @@ class Alumnos extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -141,7 +138,7 @@ class Alumnos extends Controller
                       "nombrePadre" => $solicitud->getVar("nombrePadre"),
                       "nombreMadre" => $solicitud->getVar("nombreMadre"),
                       "comentario"  => $solicitud->getVar("comentario"),
-                      "id_cliente"  => $cliente];
+                      "id_cliente"  => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);

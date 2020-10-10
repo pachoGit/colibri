@@ -33,7 +33,6 @@ class Cursos extends Controller
     
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -55,7 +54,7 @@ class Cursos extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $cursos = $modeloCursos->traerCursos($cliente);
+            $cursos = $modeloCursos->traerCursos($_SERVER["HTTP_CLIENTE"]);
             if (empty($cursos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $cursos]);
             return json_encode(["Estado" => 200, "Total" => count($cursos), "Detalles" => $cursos]);
@@ -65,7 +64,6 @@ class Cursos extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -87,7 +85,7 @@ class Cursos extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $curso = $modeloCursos->traerPorId($id, $cliente);
+            $curso = $modeloCursos->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($curso))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El curso que busca no esta registrado"], true);
@@ -99,7 +97,6 @@ class Cursos extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -128,7 +125,7 @@ class Cursos extends Controller
                       "id_categoria"  => $solicitud->getVar("id_categoria"),
                       "id_naturaleza" => $solicitud->getVar("id_naturaleza"),
                       "id_tipo"       => $solicitud->getVar("id_tipo"),
-                      "id_cliente"    => $cliente];
+                      "id_cliente"    => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -159,7 +156,7 @@ class Cursos extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
 
             $curso = $modeloCursos->where(["estado"     => 1,
-                                           "id_cliente" => $cliente,
+                                           "id_cliente" => $datos["id_cliente"],
                                            "curso"      => $datos["curso"]])->findAll();
             if (!empty($curso))
                 return json_encode(["Estado" => 404, "Detalles" => "Este curso ya existe"], true);

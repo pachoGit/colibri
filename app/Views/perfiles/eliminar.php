@@ -11,7 +11,7 @@ if (!isset($_SESSION["nombres"]))
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/alumnos/delete/".$id,
+    CURLOPT_URL => base_url()."/index.php/perfiles/delete/".$id,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -29,19 +29,17 @@ curl_close($curl);
 
 if ($_SERVER["SERVER_NAME"] == "localhost")
 {
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+	// Puede que tengamos caracteres ocultos la final de la respuesta
+	$data = substr($response, 0, $_SESSION["tam"]);
+	$data = json_decode($data, true);
 }
 else
 {
-    $data = json_decode($response, true);
+	$data = json_decode($response, true);
 }
-
-// Redireccion
 $mensaje = $data["Detalles"];
-echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/alumnos/listar';</script>";
 
+echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
 
 ?>
 

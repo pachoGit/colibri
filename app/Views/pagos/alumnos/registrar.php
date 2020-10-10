@@ -1,5 +1,11 @@
 <?php
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     $curl = curl_init();
@@ -17,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "id_alumno=".$_POST["id_alumno"].
         "&monto=".$_POST["monto"].
         "&fechaPago=".$_POST["fechaPago"].
-        "&id_motivo=".$_POST["id_motivo"],
+        "&id_motivo=".$_POST["id_motivo"].
+        "&id_cliente=".$_SESSION["id_cliente"],			    
         CURLOPT_HTTPHEADER => array(
 	    $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
@@ -25,12 +32,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+	// Puede que tengamos caracteres ocultos la final de la respuesta
+	$data = substr($response, 0, $_SESSION["tam"]);
+	$data = json_decode($data, true);
+    }
+    else
+    {
+	$data = json_decode($response, true);
+    }
+    
     if ($data["Estado"] != 200)
     {
 	$mensaje = $data["Detalles"];
@@ -39,9 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $mensaje = $data["Detalles"];
     // Redireccion despues de insertar
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/pagos/listar_alumnos';</script>";
-    //echo "<script> window.location.href='".base_url()."/index.php/pagos/listar_alumnos'; </script>";
-    //echo "<script> $(document).ready(function(){ $('#mimodal').modal('show'); });</script>";
-    //echo "<script> $('#mimodal').modal('show'); </script>";
 }
 
 $casa = new App\Controllers\Casa();
@@ -129,27 +141,6 @@ $casa->cargarCabeza($datos);
 	<hr/>
     </div>
 </main>
-
-<div class="modal fade modal-dialog modal-dialog-centered" id="mimodal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 </div>
 </div>

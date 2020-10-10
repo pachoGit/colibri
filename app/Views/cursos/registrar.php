@@ -2,6 +2,12 @@
 
 session_start();
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     $curl = curl_init();
@@ -19,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "curso=".$_POST["curso"].
         "&id_tipo=".$_POST["id_tipo"].
         "&id_categoria=".$_POST["id_categoria"].
+        "&id_cliente=".$_SESSION["id_cliente"].
         "&id_naturaleza=".$_POST["id_naturaleza"],
         CURLOPT_HTTPHEADER => array(
             $_SESSION["auth"],
@@ -28,17 +35,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     $response = curl_exec($curl);
     curl_close($curl);
-
-
-
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
-    // Redireccion
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/cursos/listar';</script>";
-
-
 }
 
 $casa = new App\Controllers\Casa();
@@ -54,9 +62,9 @@ $casa->cargarCabeza($datos);
 $m_cursos = new App\Models\ModeloCursos();
 
 // SESSION
-$tipos = $m_cursos->traerTiposCurso(1);
-$categorias = $m_cursos->traerCategoriasCurso(1);
-$naturalezas = $m_cursos->traerNaturalezasCurso(1);
+$tipos = $m_cursos->traerTiposCurso($_SESSION["id_cliente"]);
+$categorias = $m_cursos->traerCategoriasCurso($_SESSION["id_cliente"]);
+$naturalezas = $m_cursos->traerNaturalezasCurso($_SESSION["id_cliente"]);
 
 ?>
 

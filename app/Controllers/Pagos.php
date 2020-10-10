@@ -112,7 +112,6 @@ class Pagos extends Controller
 
     public function index_alumnos()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -134,7 +133,7 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pagos = $modeloPagos->traerPagosAlumnos($cliente);
+            $pagos = $modeloPagos->traerPagosAlumnos($_SERVER["HTTP_CLIENTE"]);
             if (empty($pagos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
             return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
@@ -144,7 +143,6 @@ class Pagos extends Controller
 
     public function show_alumno($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -166,7 +164,7 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pago = $modeloPagos->traerPorIdAlumno($id, $cliente);
+            $pago = $modeloPagos->traerPorIdAlumno($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($pago))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
@@ -179,7 +177,6 @@ class Pagos extends Controller
 
     public function index_profesores()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -201,7 +198,7 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pagos = $modeloPagos->traerPagosProfesores($cliente);
+            $pagos = $modeloPagos->traerPagosProfesores($_SERVER["HTTP_CLIENTE"]);
             if (empty($pagos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
             return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
@@ -211,7 +208,6 @@ class Pagos extends Controller
 
     public function show_profesor($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -233,7 +229,7 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pago = $modeloPagos->traerPorIdProfesor($id, $cliente);
+            $pago = $modeloPagos->traerPorIdProfesor($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($pago))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
@@ -247,7 +243,6 @@ class Pagos extends Controller
     
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -272,12 +267,12 @@ class Pagos extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["id_alumno"  => $solicitud->getVar("id_alumno"),
-                      "id_profesor"  => $solicitud->getVar("id_profesor"),
-                      "id_motivo"  => $solicitud->getVar("id_motivo"),
-                      "fechaPago"  => $solicitud->getVar("fechaPago"),
-                      "monto"  => $solicitud->getVar("monto"),
-                      "id_cliente" => $cliente];
+            $datos = ["id_alumno"   => $solicitud->getVar("id_alumno"),
+                      "id_profesor" => $solicitud->getVar("id_profesor"),
+                      "id_motivo"   => $solicitud->getVar("id_motivo"),
+                      "fechaPago"   => $solicitud->getVar("fechaPago"),
+                      "monto"       => $solicitud->getVar("monto"),
+                      "id_cliente"  => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -295,23 +290,23 @@ class Pagos extends Controller
             $modeloClientes = new ModeloClientes();
             $modeloMotivoPago = new ModeloMotivoPago();
 
-            $correcto = $modeloClientes->traerPorId($cliente);
+            $correcto = $modeloClientes->traerPorId($datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
-            $correcto = $modeloMotivoPago->traerPorId($datos["id_motivo"], $cliente);
+            $correcto = $modeloMotivoPago->traerPorId($datos["id_motivo"], $datos["id_cliente"]);
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el motivo de pago"]);
             if (is_null($datos["id_alumno"]))
             {
                 $modeloProfesores = new ModeloProfesores();
-                $correcto = $modeloProfesores->traerPorId($datos["id_profesor"], $cliente);
+                $correcto = $modeloProfesores->traerPorId($datos["id_profesor"], $datos["id_cliente"]);
                 if (empty($correcto))
                     return json_encode(["Estado" => 404, "Detalles" => "No existe el profesor"]);
             }
             else
             {
                 $modeloAlumnos = new ModeloAlumnos();
-                $correcto = $modeloAlumnos->traerPorId($datos["id_alumno"], $cliente);
+                $correcto = $modeloAlumnos->traerPorId($datos["id_alumno"], $datos["id_cliente"]);
                 if (empty($correcto))
                     return json_encode(["Estado" => 404, "Detalles" => "No existe el alumno"]);
             }

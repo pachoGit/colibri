@@ -1,15 +1,15 @@
 <?php  
+
 session_start();
+
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    // Soporte para las fotos
-
-    // $ruta = "/public/alumnos/".$_FILES["rutaFoto"]["name"];
-    // $ruta2 = "C:\\xampp\\htdocs\\colibri\\public\\alumnos/".$_FILES["rutaFoto"]["name"];
-    // move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
-
-    //var_dump($_POST);
-    //var_dump($_FILES);die;
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
@@ -22,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS =>
-        "grado=".$_POST["grado"],
+        "grado=".$_POST["grado"].
+        "&id_cliente=".$_SESSION["id_cliente"],        
         CURLOPT_HTTPHEADER => array(
             $_SESSION["auth"],
                                     ),
@@ -32,11 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     curl_close($curl);
 
-
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
-    // Redireccion
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
+    
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/grados/listar';</script>";
     

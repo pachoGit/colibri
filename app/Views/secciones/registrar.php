@@ -1,11 +1,15 @@
 <?php
-session_start();
+
+//session_start();
+
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-
-    //var_dump($_POST);
-    //var_dump($_FILES);die;
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
@@ -20,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         CURLOPT_POSTFIELDS =>
         "seccion=".$_POST["seccion"].
         "&id_grado=".$_POST["id_grado"].
-        "&id_cliente=1",
+        "&id_cliente=".$_SESSION["id_cliente"],
         CURLOPT_HTTPHEADER => array(
             $_SESSION["auth"],
             "Content-Type: application/x-www-form-urlencoded",
@@ -28,15 +32,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
 
-
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    //$data = substr($response, 0, -269);
-    $data = json_decode($data, true);
-    // Redireccion
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+	// Puede que tengamos caracteres ocultos la final de la respuesta
+	$data = substr($response, 0, $_SESSION["tam"]);
+	$data = json_decode($data, true);
+    }
+    else
+    {
+	$data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/secciones/listar';</script>";
 
@@ -71,7 +78,7 @@ $casa->cargarCabeza($datos);
 		    </div>
 		    <div class="widget-content" >
 			
-			<form  method="post" action="<?php base_url().'/index.php/secciones/create'?>" enctype="multipart/form-data" class="needs-validation" novalidate>
+			<form  method="post" action="<?php base_url().'/index.php/secciones/create'?>"  class="needs-validation" novalidate>
 			    <div class="form-row">
 				<div class="form-group col-md-6">
 				    <label for="nombres">Grado</label>

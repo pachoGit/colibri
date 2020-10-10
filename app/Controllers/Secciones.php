@@ -16,18 +16,20 @@ class Secciones extends Controller
     }
     public function registrar()
     {
+        session_start();
         $m_grados = new ModeloGrados();
-        $grados = $m_grados->traerGrados(1); // Reemplazar por la variable SESSION
+        $grados = $m_grados->traerGrados($_SESSION["id_cliente"]);
         $data = ["grados" => $grados];
         return view("secciones/registrar", $data);
     }
     public function editar($id)
     {
+        session_start();
         $m_secciones = new ModeloSecciones();
         $m_grados = new ModeloGrados();
 
-        $grados = $m_grados->traerGrados(1); // SESSION
-        $seccion = $m_secciones->traerPorId($id, 1); // El SESSION
+        $grados = $m_grados->traerGrados($_SESSION["id_cliente"]); // SESSION
+        $seccion = $m_secciones->traerPorId($id, $_SESSION["id_cliente"]); // El SESSION
         $mi_grado = $seccion[0]["grado"];
         $data = ["mi_grado" => $mi_grado,
                  "id"        => $id,
@@ -41,7 +43,6 @@ class Secciones extends Controller
     }
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -63,7 +64,7 @@ class Secciones extends Controller
                 continue;
             }
             $modeloSecciones = new ModeloSecciones();
-            $secciones = $modeloSecciones->traerSecciones($cliente);
+            $secciones = $modeloSecciones->traerSecciones($_SERVER["HTTP_CLIENTE"]);
             if (empty($secciones))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $secciones]);
             return json_encode(["Estado" => 200, "Total" => count($secciones), "Detalles" => $secciones]);
@@ -73,7 +74,6 @@ class Secciones extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -95,7 +95,7 @@ class Secciones extends Controller
                 continue;
             }
             $modeloSecciones = new ModeloSecciones();
-            $seccion = $modeloSecciones->traerPorId($id, $cliente);
+            $seccion = $modeloSecciones->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($seccion))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "La seccion que busca no esta registrado"], true);
@@ -107,7 +107,6 @@ class Secciones extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -134,7 +133,7 @@ class Secciones extends Controller
             // Tomamos los datos de HTTP
             $datos = ["seccion"    => $solicitud->getVar("seccion"),
                       "id_grado"   => $solicitud->getVar("id_grado"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -160,7 +159,7 @@ class Secciones extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el grado"]);
 
             $seccion = $modeloSecciones->where(["estado"     => 1,
-                                                "id_cliente" => $cliente,
+                                                "id_cliente" => $datos["id_cliente"],
                                                 "seccion"    => $datos["seccion"],
                                                 "id_grado"   => $datos["id_grado"]])->findAll();
             if (!empty($seccion))
@@ -169,7 +168,7 @@ class Secciones extends Controller
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloSecciones->insert($datos);
-            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del seccion guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos de la seccion guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -223,7 +222,7 @@ class Secciones extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el grado"]);
             
             $modeloSecciones->update($id, $datos);
-            $data = ["Estado" => 200, "Detalles" => "Datos del seccion actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos de la seccion actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -260,7 +259,7 @@ class Secciones extends Controller
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloSecciones->update($id, $datos);
-            $data = ["Estado" => 200, "Detalles" => "Datos del seccion eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos de la seccion eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

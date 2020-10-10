@@ -30,9 +30,9 @@ class Grados extends Controller
         $data = ["id" => $id];
         echo view("grados/eliminar", $data);
     }
+
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -54,7 +54,7 @@ class Grados extends Controller
                 continue;
             }
             $modeloGrados = new ModeloGrados();
-            $grados = $modeloGrados->traerGrados($cliente);
+            $grados = $modeloGrados->traerGrados($_SERVER["HTTP_CLIENTE"]);
             if (empty($grados))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $grados]);
             return json_encode(["Estado" => 200, "Total" => count($grados), "Detalles" => $grados]);
@@ -64,7 +64,6 @@ class Grados extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -86,7 +85,7 @@ class Grados extends Controller
                 continue;
             }
             $modeloGrados = new ModeloGrados();
-            $grado = $modeloGrados->traerPorId($id, $cliente);
+            $grado = $modeloGrados->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($grado))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El grado que busca no esta registrado"], true);
@@ -98,7 +97,6 @@ class Grados extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -124,8 +122,7 @@ class Grados extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["grado"      => $solicitud->getVar("grado"),
-                      /*"id_cliente" => $solicitud->getVar("id_cliente")*/
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -140,7 +137,7 @@ class Grados extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $grado = $modeloGrados->where(["estado"     => 1,
-                                           "id_cliente" => $cliente,
+                                           "id_cliente" => $datos["id_cliente"],
                                            "grado"      => $datos["grado"]])->findAll();
             if (!empty($grado))
                 return json_encode(["Estado" => 404, "Detalles" => "Este grado ya existe"], true);

@@ -2,6 +2,12 @@
 
 session_start();
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     //var_dump($_FILES["rutaFoto"]);die;
@@ -14,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     else
     {
         $usuario = new App\Models\ModeloProfesores();
-        $usuario = $usuario->traerPorId($_POST["idProfesor"], 1); // SESSION
+        $usuario = $usuario->traerPorId($_POST["idProfesor"], $_SESSION["id_cliente"]); // SESSION
         $ruta = $usuario[0]["rutaFoto"];
     }
 
@@ -47,12 +53,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/profesores/listar';</script>";
     return;
@@ -72,7 +84,7 @@ else
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            $_SESSION["auth"],
+            $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
                                     ),
                                    ));
     $response = curl_exec($curl);
@@ -87,7 +99,7 @@ else
     $nmodulos = $casa->traerModulos();
 
     $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
-              "titulo"  => "PROFESORES",                                                                                                                   
+              "titulo"  => "PROFESORES",
               "nombre"  => $_SESSION["nombres"],                                                                                                       
               "modulos" => $nmodulos];
 

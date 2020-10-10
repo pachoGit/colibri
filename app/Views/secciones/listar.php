@@ -1,9 +1,12 @@
 <?php
-//session_start();
-
-namespace App\Controllers;
 
 session_start();
+
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
 
 $curl = curl_init();
 
@@ -17,44 +20,25 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
   CURLOPT_HTTPHEADER => array(
-    $_SESSION["auth"],
+    $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
   ),
 ));
-
-/*
-curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://colibri.informaticapp.com/index.php/usuarios",
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => "",
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "GET",
-  CURLOPT_HTTPHEADER => array(
-    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ=="
-  ),
-));
-*/
 
 $response = curl_exec($curl);
-
 curl_close($curl);
 
+if ($_SERVER["SERVER_NAME"] == "localhost")
+{
+    // Puede que tengamos caracteres ocultos la final de la respuesta
+    $data = substr($response, 0, $_SESSION["tam"]);
+    $data = json_decode($data, true);
+}
+else
+{
+    $data = json_decode($response, true);
+}
 
-// Puede que tengamos caracteres ocultos la final de la respuesta
-$data = substr($response, 0, $_SESSION["tam"]);
-//$data = substr($response, 0, -269);
-$data = json_decode($data, true);
-//var_dump($response);
-//die;
-//if (session_start() == false)
-//{
-   // session_start();
-//}
-
-
-$casa = new Casa();
+$casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                                                                                         
@@ -107,7 +91,7 @@ $casa->cargarCabeza($datos);
 				    <td><?php echo $seccion['id_cliente']; ?></td>
 				    <td><a href="editar/<?= $seccion['idSeccion']?>" class="btn
 						 btn-warning">Editar</a></td>
-				    <td><a href="eliminar/<?= $seccion['idSeccion']?>"
+				    <td><a onclick="return alerta();" href="eliminar/<?= $seccion['idSeccion']?>"
 					   class="btn btn-danger">Eliminar</a></td>
 				</tr>
 			    </tbody>
@@ -127,4 +111,15 @@ $casa->cargarCabeza($datos);
 </main>
 </div>
 </div>
+<script type="text/javascript">
+  function alerta()
+  {
+      var r = confirm("Eliminar esta sección?");
+      if (r)
+	  return true;
+      else
+	  return false;
+  }
+</script>
+
 <?php echo view("comun/pie"); ?>

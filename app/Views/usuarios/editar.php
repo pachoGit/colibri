@@ -1,11 +1,16 @@
 <?php
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 //session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     // Soporte para las fotos
-
     if (!empty($_FILES["rutaFoto"]["name"]))
     {
         $ruta = "/public/usuarios/".$_FILES["rutaFoto"]["name"];
@@ -15,14 +20,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     else
     {
         $usuario = new App\Models\ModeloUsuarios();
-        $usuario = $usuario->traerPorId($_POST["idUsuario"], 1); // SESSION
+        $usuario = $usuario->traerPorId($_POST["idUsuario"], $_SESSION["id_cliente"]); // SESSION
         $ruta = $usuario[0]["rutaFoto"];
     }
 
     //var_dump($_POST);
     //var_dump($_FILES);die;
     $curl = curl_init();
-
     curl_setopt_array($curl, array(
         CURLOPT_URL => base_url()."/index.php/usuarios/update/".$_POST["idUsuario"],
         CURLOPT_RETURNTRANSFER => true,
@@ -42,7 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "&direccion=".$_POST["direccion"].
         "&correo=".$_POST["correo"].
         "&contra=".$_POST["contra"].
-        "&id_perfil=".$_POST["id_perfil"].        
+        "&id_perfil=".$_POST["id_perfil"].
+        "&id_cliente=".$_SESSION["id_cliente"].
         "&comentario=".$_POST["comentario"],
         CURLOPT_HTTPHEADER => array(
             $_SESSION["auth"],
@@ -51,13 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
-
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/usuarios/listar';</script>";
     return;
@@ -76,16 +86,23 @@ else
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            $_SESSION["auth"],
+            $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
                                     ),
                                    ));
     
     $response = curl_exec($curl);
     curl_close($curl);
 
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
 
     $casa = new App\Controllers\Casa();
     $nmodulos = $casa->traerModulos();

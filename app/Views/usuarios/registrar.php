@@ -1,6 +1,10 @@
 <?php
 
-//session_start();
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
@@ -31,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         "&direccion=".$_POST["direccion"].
         "&correo=".$_POST["correo"].
         "&contra=".$_POST["contra"].
-        "&id_perfil=".$_POST["id_perfil"].        
+        "&id_perfil=".$_POST["id_perfil"].
+        "&id_cliente=".$_SESSION["id_cliente"].        
         "&comentario=".$_POST["comentario"],
         CURLOPT_HTTPHEADER => array(
 	    $_SESSION["auth"],
@@ -40,13 +45,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-
     curl_close($curl);
-
-    // Puede que tengamos caracteres ocultos la final de la respuesta
-    $data = substr($response, 0, $_SESSION["tam"]);
-    $data = json_decode($data, true);
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+        // Puede que tengamos caracteres ocultos la final de la respuesta
+        $data = substr($response, 0, $_SESSION["tam"]);
+        $data = json_decode($data, true);
+    }
+    else
+    {
+        $data = json_decode($response, true);
+    }
     $mensaje = $data["Detalles"];
+    
     // Redireccion
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/usuarios/listar';</script>";
     

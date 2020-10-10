@@ -51,9 +51,9 @@ class Casa extends BaseController
         $nmodulos = $this->traerModulos();
 
         $data = ["perfil"  => $_SESSION["perfil"],
-                  "titulo"  => "INICIO",
-                  "nombre"  => $_SESSION["nombres"],
-                  "modulos" => $nmodulos];
+                 "titulo"  => "INICIO",
+                 "nombre"  => $_SESSION["nombres"],
+                 "modulos" => $nmodulos];
         
         $this->cargarVistas("comun/inicio", $data);
     }
@@ -64,6 +64,6 @@ class Casa extends BaseController
     public function salir()
     {
         session_destroy();
-        return redirect()->to(base_url());
+        return redirect()->to(base_url()."/index.php/home/iniciar");
     }
 }

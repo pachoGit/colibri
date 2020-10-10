@@ -42,7 +42,7 @@ class Registros extends Controller
         // Si la validacion genera errores
         if (($errores = $validacion->getErrors()))
         {
-            $data = ["Estado" => 404, "Detalle" => $errores];
+            $data = ["Estado" => 404, "Detalles" => $errores];
             return json_encode($data, true);
         }
         //$data_encriptar = $datos["nombres"].$datos["apellidos"].$datos["email"];
@@ -63,7 +63,7 @@ class Registros extends Controller
         $registro = $modelo->insert($datos);
         // Mensaje de registro
         $data = ["Estado"       => 200,
-                 "Detalle"      => "Registro exitoso, tome sus credenciales y guardeselas",
+                 "Detalles"      => "Registro exitoso, tome sus credenciales y guardeselas",
                  "credenciales" => ["cliente_id"    => str_replace("$", "a", $cliente_id),
                                     "llave_secreta" => str_replace("$", "o", $llave_secreta)]];
         return json_encode($data, true);

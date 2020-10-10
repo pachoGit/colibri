@@ -16,7 +16,6 @@ class Profesores extends Controller
     public function registrar()
     {
         return view("profesores/registrar");
-        return redirect()->to(base_url()."/index.php/profesores/listar");
     }
 
     public function ver($id)
@@ -39,7 +38,6 @@ class Profesores extends Controller
     
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -61,7 +59,7 @@ class Profesores extends Controller
                 continue;
             }
             $modeloProfesores = new ModeloProfesores();
-            $profesores = $modeloProfesores->traerProfesores($cliente);
+            $profesores = $modeloProfesores->traerProfesores($_SERVER["HTTP_CLIENTE"]);
             if (empty($profesores))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $profesores]);
             return json_encode(["Estado" => 200, "Total" => count($profesores), "Detalles" => $profesores]);
@@ -71,7 +69,6 @@ class Profesores extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -93,7 +90,7 @@ class Profesores extends Controller
                 continue;
             }
             $modeloProfesores = new ModeloProfesores();
-            $profesor = $modeloProfesores->traerPorId($id, $cliente);
+            $profesor = $modeloProfesores->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($profesor))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El profesor que busca no esta registrado"], true);
@@ -105,7 +102,6 @@ class Profesores extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -139,7 +135,7 @@ class Profesores extends Controller
                       "edad"        => $solicitud->getVar("edad"),
                       "estudios"    => $solicitud->getVar("estudios"),
                       "comentario"  => $solicitud->getVar("comentario"),
-                      "id_cliente"  => $cliente];
+                      "id_cliente"  => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);

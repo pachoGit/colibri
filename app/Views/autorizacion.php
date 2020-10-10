@@ -25,13 +25,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $response = curl_exec($curl);
     curl_close($curl);
 
-    $data = substr($response, 0, -274);
-    $data = json_decode($data, true);
+    if ($_SERVER["SERVER_NAME"] == "localhost")
+    {
+	// Puede que tengamos caracteres ocultos la final de la respuesta
+	$data = substr($response, 0, -266); // -274
+	$data = json_decode($data, true);
+    }
+    else
+    {
+	$data = json_decode($response, true);
+    }
 
     if ($data["Estado"] != 200)
     {
-        var_dump($data);die;
-	}
+	$mensaje = $data["Detalles"];
+	echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."';</script>";
+    }
 
     $cred = ["data" => $data["credenciales"]];
     

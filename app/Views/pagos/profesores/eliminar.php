@@ -2,6 +2,12 @@
 
 //session_start();
 
+if (!isset($_SESSION["nombres"]))
+{
+    echo "<script>alert('Usted no ha iniciado sesión');window.location.href = '".base_url()."/index.php/home/iniciar';</script>";
+    return;
+}
+
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
@@ -21,8 +27,16 @@ curl_setopt_array($curl, array(
 $response = curl_exec($curl);
 curl_close($curl);
 
-$data = substr($response, 0, $_SESSION["tam"]);
-$data = json_decode($data, true);
+if ($_SERVER["SERVER_NAME"] == "localhost")
+{
+	// Puede que tengamos caracteres ocultos la final de la respuesta
+	$data = substr($response, 0, $_SESSION["tam"]);
+	$data = json_decode($data, true);
+}
+else
+{
+	$data = json_decode($response, true);
+}
 
 $mensaje = $data["Detalles"];
 
