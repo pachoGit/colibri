@@ -8,6 +8,24 @@ use App\Models\ModeloMotivoPago;
 
 class MotivoPago extends Controller
 {
+    public function listar_motivo()
+    {
+        return view("pagos/motivos_pagos/listar");
+    }
+    public function registrar()
+    {
+        return view("pagos/motivos_pagos/registrar");
+    }
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("pagos/motivos_pagos/editar", $data);
+    }
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("pagos/motivos_pagos/eliminar", $data);
+    }
     public function index()
     {
         $cliente = 1;
