@@ -174,7 +174,7 @@ else
 			    </div>
 			    <div class="form-group col-md-6">
 				<label for="dni">DNI</label>
-				<input type="text" class="form-control" name="dni" value="<?= $data["dni"]; ?>" id="dni" required mixlength="8" maxlength="8">
+				<input type="text" class="form-control" name="dni" value="<?= $data["dni"]; ?>" id="dni" required minlength="8" maxlength="8">
 				<div class="invalid-feedback">
 				  Ingrese solo 8 n&uacute;meros
 				</div>
