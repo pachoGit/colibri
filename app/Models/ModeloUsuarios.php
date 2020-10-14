@@ -21,7 +21,6 @@ class ModeloUsuarios extends Model
                                   "edad"        => "required|integer|is_natural",
                                   "contra"      => "required|string|max_length[255]",
                                   "id_perfil"   => "required|integer",
-                                  "comentario"  => "required|string|max_length[255]",
                                   "correo"      => "required|string|max_length[255]|valid_email"
                                   ];
     protected $validationMessages = ["nombres"     => ["max_length"  => "Se ha sobrepasado el tamanio del texto"],

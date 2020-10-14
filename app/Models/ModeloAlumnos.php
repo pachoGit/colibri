@@ -21,7 +21,6 @@ class ModeloAlumnos extends Model
                                   "edad"        => "required|integer|is_natural",
                                   "nombrePadre" => "required|string|max_length[255]",
                                   "nombreMadre" => "required|string|max_length[255]",
-                                  "comentario"  => "required|string|max_length[255]",
                                   "correo"      => "required|string|max_length[255]|valid_email"
                                   ];
     protected $validationMessages = ["nombres"     => ["max_length"  => "Se ha sobrepasado el tamanio del texto"],
