@@ -35,7 +35,3 @@
 	<a href="<?= base_url().'/index.php/casa/salir'; ?>"  class="btn btn-outline-danger mt-5"> SALIR </a>
       </div>
     </nav>
-    <!--
-  </div>
-</div>
---!

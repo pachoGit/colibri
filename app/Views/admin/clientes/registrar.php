@@ -8,12 +8,7 @@
      {
 	 if (xhttp.readyState == 4 && xhttp.status == 200)
 	 {
-	     <?php if ($_SERVER["SERVER_NAME"] == "localhost") {?>
-	     var tam = -266; // Copiar aqui lo que tienes en $_SESSION["tam"]
-	     respuesta = this.responseText.slice(0, tam);
-	     <?php } else { ?>
 	     respuesta = this.responseText;
-	     <?php } ?>
 	     if (callback)
 		 callback(respuesta);
 	 }

@@ -24,9 +24,8 @@ $response = curl_exec($curl);
 
 curl_close($curl);
 
-// Puede que tengamos caracteres ocultos la final de la respuesta
-$data = substr($response, 0, $_SESSION["tam"]);
-$data = json_decode($data, true);
+$data = json_decode($response, true);
+
 // Redireccion
 $mensaje = $data["Detalle"];
 echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/motivoPago/listar_motivo';</script>";

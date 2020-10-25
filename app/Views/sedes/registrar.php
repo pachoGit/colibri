@@ -31,20 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                                    ));
 
     $response = curl_exec($curl);
-    // var_dump($response);die;
-
     curl_close($curl);
 
-    if ($_SERVER["SERVER_NAME"] == "localhost")
-    {
-        // Puede que tengamos caracteres ocultos la final de la respuesta
-        $data = substr($response, 0, $_SESSION["tam"]);
-        $data = json_decode($data, true);
-    }
-    else
-    {
-        $data = json_decode($response, true);
-    }
+    $data = json_decode($response, true);
     
     $mensaje = $data["Detalles"];
     echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/sedes/listar';</script>";

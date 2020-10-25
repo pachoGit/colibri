@@ -40,16 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $response = curl_exec($curl);
     curl_close($curl);
 
-    if ($_SERVER["SERVER_NAME"] == "localhost")
-    {
-        // Puede que tengamos caracteres ocultos la final de la respuesta
-        $data = substr($response, 0, $_SESSION["tam"]);
-        $data = json_decode($data, true);
-    }
-    else
-    {
-        $data = json_decode($response, true);
-    }
+    $data = json_decode($response, true);
+
     if ($data["Estado"] != 200)
     {
         // Redireccion
@@ -90,16 +82,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $response = curl_exec($curl);
         curl_close($curl);
 
-        if ($_SERVER["SERVER_NAME"] == "localhost")
-        {
-            // Puede que tengamos caracteres ocultos la final de la respuesta
-            $data = substr($response, 0, $_SESSION["tam"]);
-            $data = json_decode($data, true);
-        }
-        else
-        {
-            $data = json_decode($response, true);
-        }
+        $data = json_decode($response, true);
+
         if ($data["Estado"] != 200)
         {
             // Redireccion
@@ -135,16 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $response = curl_exec($curl);
         curl_close($curl);
 
-        if ($_SERVER["SERVER_NAME"] == "localhost")
-        {
-            // Puede que tengamos caracteres ocultos la final de la respuesta
-            $data = substr($response, 0, $_SESSION["tam"]);
-            $data = json_decode($data, true);
-        }
-        else
-        {
-            $data = json_decode($response, true);
-        }
+        $data = json_decode($response, true);	
+
         if ($data["Estado"] != 200)
         {
             // Redireccion
