@@ -10,13 +10,73 @@ use App\Models\ModeloAlumnos;
 use App\Models\ModeloCursos;
 use App\Models\ModeloSecciones;
 use App\Models\ModeloCiclos;
+use App\Models\ModeloGrados;
 
 
 class AlumnoPorCurso extends Controller
 {
+    public function listar()
+    {
+        return view("matriculas/alumnos/listar");
+    }
+
+    public function registrar()
+    {
+        session_start();
+        $m_alumnos = new ModeloAlumnos();
+        $m_cursos = new ModeloCursos();
+        $m_ciclos = new ModeloCiclos();
+        $m_grados = new ModeloGrados();        
+
+        $alumnos = $m_alumnos->traerAlumnos($_SESSION["id_cliente"]);
+        $cursos = $m_cursos->traerCursos($_SESSION["id_cliente"]);
+        $ciclos = $m_ciclos->traerCiclos($_SESSION["id_cliente"]);
+        $grados = $m_grados->traerGrados($_SESSION["id_cliente"]);        
+        
+        $data = ["alumnos" => $alumnos, "cursos" => $cursos,
+                 "ciclos"  => $ciclos,  "grados" => $grados];
+        return view("matriculas/alumnos/registrar", $data);
+    }
+
+    /**** Funciones para registrar una nueva matricula - AJAX ****/
+    
+    // Funcion de ayuda, para obtener las secciones de un determinado grado
+    public function seccionesDeGrado()
+    {
+        session_start();
+        $m_grados = new ModeloGrados();
+        // $_POST es lo que obtenemos de AJAX
+        $secciones = $m_grados->traerSeccionesDeGrado($_POST["idgrado"], $_SESSION["id_cliente"]);
+        return json_encode($secciones, true);
+    }
+
+    public function traerCurso()
+    {
+        session_start();
+        $m_cursos = new ModeloCursos();
+        $curso = $m_cursos->traerPorId($_POST["idcurso"], $_SESSION["id_cliente"]);
+        return json_encode($curso[0], true);
+    }
+    
+    /**** Fin de las funciones para registrar una nueva matricula - AJAX ****/
+
+    public function ver($id)
+    {
+        $data = ["id" => $id];
+        
+        return view("matriculas/alumnos/ver",$data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        
+        return view("matriculas/alumnos/eliminar",$data);
+    }
+
+    
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -38,7 +98,7 @@ class AlumnoPorCurso extends Controller
                 continue;
             }
             $modeloAlumnoPorCurso = new ModeloAlumnoPorCurso();
-            $cursos = $modeloAlumnoPorCurso->traerAlumnosPorCurso($cliente);
+            $cursos = $modeloAlumnoPorCurso->traerAlumnosPorCurso($_SERVER["HTTP_CLIENTE"]);
             if (empty($cursos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $cursos]);
             return json_encode(["Estado" => 200, "Total" => count($cursos), "Detalles" => $cursos]);
@@ -48,7 +108,6 @@ class AlumnoPorCurso extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -70,19 +129,21 @@ class AlumnoPorCurso extends Controller
                 continue;
             }
             $modeloAlumnoPorCurso = new ModeloAlumnoPorCurso();
-            $curso = $modeloAlumnoPorCurso->traerPorId($id, $cliente);
+            $curso = $modeloAlumnoPorCurso->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($curso))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El AlumnoPorCurso que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El AlumnoPorCurso que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $curso]);
+            $curso = $curso[0];
+            //return json_encode($curso);
+            $datos = $modeloAlumnoPorCurso->traerMostrar($curso["id_alumno"], $curso["id_ciclo"], $curso["id_cliente"]);
+            return json_encode(["Estado" => 200, "Detalles" => $datos]);
         }
         return json_encode($error);
     }
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -111,7 +172,7 @@ class AlumnoPorCurso extends Controller
                       "id_curso"   => $solicitud->getVar("id_curso"),
                       "id_seccion" => $solicitud->getVar("id_seccion"),
                       "id_ciclo"   => $solicitud->getVar("id_ciclo"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente"),];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -123,7 +184,7 @@ class AlumnoPorCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
@@ -149,18 +210,18 @@ class AlumnoPorCurso extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"]);
 
             $correcto = $modeloAlumnoPorCurso->where(["estado"     => 1,
-                                                      "id_cliente" => $cliente,
+                                                      "id_cliente" => $datos["id_cliente"],
                                                       "id_alumno"  => $datos["id_alumno"],
                                                       "id_curso"   => $datos["id_curso"],
                                                       "id_seccion" => $datos["id_seccion"],
                                                       "id_ciclo"   => $datos["id_ciclo"]])->findAll();
             if (!empty($correcto))
-                return json_encode(["Estado" => 404, "Detalle" => "Este alumno ya esta registrado <curso,seccion,ciclo>"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Este alumno ya esta registrado <curso,seccion,ciclo>"], true);
 
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloAlumnoPorCurso->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del alumnoPorCurso guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del alumnoPorCurso guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -201,12 +262,12 @@ class AlumnoPorCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $reg = $modeloAlumnoPorCurso->where("estado", 1)->find($id);
             if (empty($reg))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el AlumnoPorCurso"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el AlumnoPorCurso"], true);
             
             $modeloAlumnos = new ModeloAlumnos();
             $modeloCursos = new ModeloCursos();
@@ -227,7 +288,7 @@ class AlumnoPorCurso extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"]);
             
             $modeloAlumnoPorCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del curso actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del curso actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -259,12 +320,12 @@ class AlumnoPorCurso extends Controller
             $modeloAlumnoPorCurso = new ModeloAlumnoPorCurso();
             $reg = $modeloAlumnoPorCurso->where("estado", 1)->find($id);
             if (empty($reg))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el AlumnoPorCurso"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el AlumnoPorCurso"], true);
             $datos = ["estado"    => 0,
                       "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la base de datos
             $modeloAlumnoPorCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del AlumnoPorCurso eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del AlumnoPorCurso eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

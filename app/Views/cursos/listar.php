@@ -67,9 +67,9 @@ $casa->cargarCabeza($datos);
 		<div class="widget-content" >
                     
 		    <a href="registrar" class="btn btn-success mb-1">Registrar</a>
-		    <a href="tipo" class="btn btn-secondary mb-1 ml-5">Tipos de cursos</a>
-		    <a href="registrar" class="btn btn-info mb-1">Categorias de cursos</a>
-		    <a href="registrar" class="btn btn-dark mb-1">Naturalezas de cursos</a>		    
+		    <button data-toggle="modal" data-target="#tipo" class="btn btn-secondary mb-1 ml-5">Tipos de cursos</button>
+		    <button data-toggle="modal" data-target="#categoria" class="btn btn-info mb-1 ml-5">Categorias de cursos</button>
+		    <button data-toggle="modal" data-target="#naturaleza" class="btn btn-dark mb-1 ml-5">Naturalezas de cursos</button>		    
 
 		    <table class="table table-bordered table-striped">
 			<thead>
@@ -113,6 +113,93 @@ $casa->cargarCabeza($datos);
     <hr/>
 </div>
 </main>
+
+<!-- Nuevo tipo de curso -->
+<div class="modal fade" id="tipo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">Registrar nuevo tipo de curso</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		</button>
+	    </div>
+	    <div class="modal-body">
+		<form class="form-signin" method="post" action="<?= base_url().'/index.php/tipoCurso/crear';?>">
+		    <div class="form-group">
+			<label for="tipo">Ingrese el nuevo tipo</label>
+			<input class="form-control" name="tipo" id="tipo" required>
+		    </div>
+		    <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+		</form>
+	    </div>
+	    <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+		<!--<button type="button" class="btn btn-primary">Save changes</button>-->
+	    </div>
+	</div>
+    </div>
+</div>  
+
+
+
+<!-- Nueva categoria de curso -->
+<div class="modal fade" id="categoria" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">Registrar nueva categoria de curso</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		</button>
+	    </div>
+	    <div class="modal-body">
+		<form class="form-signin" method="post" action="<?= base_url().'/index.php/categoriaCurso/crear';?>">
+		    <div class="form-group">
+			<label for="categoria">Ingrese la nueva categoria</label>
+			<input class="form-control" name="categoria" id="categoria" required>
+		    </div>
+		    <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+		</form>
+	    </div>
+	    <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+	    </div>
+	</div>
+    </div>
+</div>  
+
+
+
+
+<!-- Nuevo naturaleza de curso -->
+<div class="modal fade" id="naturaleza" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<h5 class="modal-title" id="exampleModalLabel">Registrar nueva naturaleza de curso</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		</button>
+	    </div>
+	    <div class="modal-body">
+		<form class="form-signin" method="post" action="<?= base_url().'/index.php/naturalezaCurso/crear';?>">
+		    <div class="form-group">
+			<label for="naturaleza">Ingrese la nueva naturaleza</label>
+			<input class="form-control" name="naturaleza" id="naturaleza" required>
+		    </div>
+		    <button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+		</form>
+	    </div>
+	    <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+	    </div>
+	</div>
+    </div>
+</div>  
+
+
+
 </div>
 </div>
 <script type="text/javascript">

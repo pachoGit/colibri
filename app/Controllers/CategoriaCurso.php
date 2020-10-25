@@ -9,6 +9,14 @@ use App\Models\ModeloCursos;
 
 class CategoriaCurso extends Controller
 {
+    public function crear()
+    {
+        $solicitud = \Config\Services::request();
+
+        $data = ["categoria" => $solicitud->getVar("categoria")];
+        return view("categoriaCurso/registrar", $data);
+    }
+    
     public function index()
     {
         $cliente = 1;
@@ -68,16 +76,15 @@ class CategoriaCurso extends Controller
             $categoria = $modeloCursos->traerCategoriaPorId($id, $cliente);
             if (empty($categoria))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "La categoria del curso que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "La categoria del curso que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $categoria]);
+            return json_encode(["Estado" => 200, "Detalles" => $categoria]);
         }
         return json_encode($error);
     }
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -103,7 +110,7 @@ class CategoriaCurso extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["categoria"  => $solicitud->getVar("categoria"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -115,17 +122,17 @@ class CategoriaCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $categoria = $modeloCategoriaCurso->where(["estado"     => 1,
-                                                       "id_cliente" => $cliente,
+                                                       "id_cliente" => $datos["id_cliente"],
                                                        "categoria"  => $datos["categoria"]])->findAll();
             if (!empty($categoria))
-                return json_encode(["Estado" => 404, "Detalle" => "Este categoria ya existe"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "Este categoria ya existe"], true);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloCategoriaCurso->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos de la categoria guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos de la categoria guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -166,14 +173,14 @@ class CategoriaCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $categoria = $modeloCategoriaCurso->where("estado", 1)->find($id);
             if (empty($categoria))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe la categoria"], true);
+                return json_encode(["Estado" => 200, "Detalles" => "No existe la categoria"], true);
             $modeloCategoriaCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos de la categoria actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos de la categoria actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -205,12 +212,12 @@ class CategoriaCurso extends Controller
             $modeloCategoriaCurso = new ModeloCategoriaCurso();
             $categoria = $modeloCategoriaCurso->where("estado", 1)->find($id);
             if (empty($categoria))
-                return json_encode(["Estado" => 200, "Detalle" => "No existe la categoria"], true);
+                return json_encode(["Estado" => 200, "Detalles" => "No existe la categoria"], true);
             $datos = ["fechaElim" => date("Y-m-d"),
                       "estado"    => 0];
             // Insertamos los datos a la base de datos
             $modeloCategoriaCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos de la categoria eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos de la categoria eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

@@ -28,7 +28,6 @@ class MotivoPago extends Controller
     }
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -50,7 +49,7 @@ class MotivoPago extends Controller
                 continue;
             }
             $modeloMotivoPago = new ModeloMotivoPago();
-            $motivo = $modeloMotivoPago->traerMotivoPago($cliente);
+            $motivo = $modeloMotivoPago->traerMotivoPago($_SERVER["HTTP_CLIENTE"]);
             if (empty($motivo))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $motivo]);
             return json_encode(["Estado" => 200, "Total" => count($motivo), "Detalles" => $motivo]);
@@ -94,7 +93,6 @@ class MotivoPago extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -120,7 +118,7 @@ class MotivoPago extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["motivo"    => $solicitud->getVar("motivo"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -135,7 +133,7 @@ class MotivoPago extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             $motivo = $modeloMotivoPago->where(["estado"     => 1,
-                                                "id_cliente" => $cliente,
+                                                "id_cliente" => $datos["id_cliente"],
                                                 "motivo"      => $datos["motivo"]])->findAll();
             if (!empty($motivo))
                 return json_encode(["Estado" => 404, "Detalle" => "Este motivo de pago ya existe"], true);

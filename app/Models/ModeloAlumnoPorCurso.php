@@ -12,8 +12,6 @@ class ModeloAlumnoPorCurso extends Model
     protected $allowedFields = ["id_alumno", "id_curso", "id_seccion", "id_ciclo",
                                 "notaFinal", "fechaCreacion", "fechaElim", "id_cliente", "estado"];
     protected $validationRules = ["id_alumno"  => "required|integer",
-                                  "id_curso"   => "required|integer",
-                                  "id_seccion" => "required|integer",
                                   "id_ciclo"   => "required|integer",
                                   ];
     protected $validationMessages = ["id_alumno"  => ["integer"    => "Ingrese un numero"],
@@ -46,4 +44,19 @@ class ModeloAlumnoPorCurso extends Model
                 ->join("Ciclos cl", "c.id_ciclo = cl.idCiclo")
                 ->get()->getResultArray();
     }
+
+    public function traerMostrar($idalumno, $idciclo, $cliente)
+    {
+        return $this->db->table("AlumnoPorCurso c")
+                ->where("c.estado", 1)
+                ->where("c.id_cliente", $cliente)
+                ->where("c.id_alumno", $idalumno)
+                ->where("c.id_ciclo", $idciclo)                
+                ->join("Alumnos tc", "c.id_alumno = tc.idAlumno")
+                ->join("Cursos cc", "c.id_curso = cc.idCurso")
+                ->join("Secciones nc", "c.id_seccion = nc.idSeccion")
+                ->join("Ciclos cl", "c.id_ciclo = cl.idCiclo")
+                ->get()->getResultArray();
+    }
+    
 }

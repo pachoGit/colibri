@@ -9,6 +9,14 @@ use App\Models\ModeloCursos;
 
 class TipoCurso extends Controller
 {
+    public function crear()
+    {
+        $solicitud = \Config\Services::request();
+
+        $data = ["tipo" => $solicitud->getVar("tipo")];
+        return view("tipoCurso/registrar", $data);
+    }
+    
     public function index()
     {
         $cliente = 1;
@@ -68,16 +76,15 @@ class TipoCurso extends Controller
             $tipo = $modeloCursos->traerTipoPorId($id, $cliente);
             if (empty($tipo))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El tipo del curso que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El tipo del curso que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $tipo]);
+            return json_encode(["Estado" => 200, "Detalles" => $tipo]);
         }
         return json_encode($error);
     }
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -103,7 +110,7 @@ class TipoCurso extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["tipo"       => $solicitud->getVar("tipo"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -115,17 +122,17 @@ class TipoCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $tipo = $modeloTipoCurso->where(["estado"     => 1,
-                                             "id_cliente" => $cliente,
+                                             "id_cliente" => $datos["id_cliente"],
                                              "tipo"       => $datos["tipo"]])->findAll();
             if (!empty($tipo))
-                return json_encode(["Estado" => 404, "Detalle" => "Este tipo ya existe"]);
+                return json_encode(["Estado" => 404, "Detalles" => "Este tipo ya existe"]);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la base de datos
             $modeloTipoCurso->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del tipo guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del tipo guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -166,14 +173,14 @@ class TipoCurso extends Controller
             // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $tipo = $modeloTipoCurso->where("estado", 1)->find($id);
             if (empty($tipo))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el tipo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"], true);
             $modeloTipoCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos de la tipo actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos de la tipo actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -205,12 +212,12 @@ class TipoCurso extends Controller
             $modeloTipoCurso = new ModeloTipoCurso();
             $tipo = $modeloTipoCurso->where("estado", 1)->find($id);
             if (empty($tipo))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el tipo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"], true);
             $datos = ["fechaElim" => date("Y-m-d"),
                       "estado"    => 0];
             // Insertamos los datos a la base de datos
             $modeloTipoCurso->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del tipo eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del tipo eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

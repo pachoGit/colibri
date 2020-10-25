@@ -30,6 +30,11 @@ class Cursos extends Controller
         $data = ["id" => $id];
         echo view("cursos/eliminar", $data);
     }
+
+    public function tipo()
+    {
+        return view("tiposCursos/registrar");
+    }
     
     public function index()
     {

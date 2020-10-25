@@ -9,8 +9,8 @@ class ModeloClientes extends Model
     protected $table = "Clientes";
     protected $primaryKey = "idCliente";
     protected $returnType = "array";
-    protected $allowedFields = ["cliente", "ruc", "fechaContrato", "fechaCreacion",
-                                "nombreEncar", "apellidoEncar", "fechaElim", "estado"];
+    protected $allowedFields = ["cliente", "ruc", "fechaContrato", "fechaCreacion", "correoCliente", "url",
+                                "nombreEncar", "apellidoEncar", "foto", "fechaElim", "estado"];
     protected $validationRules = ["cliente"       => "required|string|max_length[255]",
                                   "ruc"           => "required|string|max_length[11]|min_length[11]",
                                   "nombreEncar"   => "required|string|max_length[255]",

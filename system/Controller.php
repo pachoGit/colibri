@@ -241,5 +241,18 @@ class Controller
         echo view("comun/menu");
     }
 
+    public function vistasAdmin($vista = null, $data)
+    {
+        echo view("admin/comun/cabecera");
+        echo view($vista, $data);
+        echo view("admin/comun/pie");
+    }
+
+    public function vistasAdminSimple($vista = null)
+    {
+        echo view("admin/comun/cabecera");
+        echo view($vista);
+        echo view("admin/comun/pie");
+    }
 }
 
