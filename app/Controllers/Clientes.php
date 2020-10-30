@@ -249,6 +249,16 @@ class Clientes extends Controller
         $idmalumno = $mmodulos->insert($malumnos);
         array_push($data, $idmalumno);
 
+        // Modulo matricula de profesor
+        $mprofesores = ["modulo"         => "Profesores",
+                        "fechaCreacion"  => $fecha,
+                        "url"            => "curSecPorProfesor/listar",
+                        "id_moduloPadre" => $idmatricula,
+                        "id_cliente"     => $id_cliente];
+        $idmprofesor = $mmodulos->insert($mprofesores);
+        array_push($data, $idmprofesor);
+
+
         /*** Fin de la creacion de los modulos ***/
 
         /*** Asignacion de permisos al perfil de administrador ***/
