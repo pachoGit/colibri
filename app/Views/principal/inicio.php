@@ -44,93 +44,50 @@
 	</div>
 
 
+<!-- Modulos -->
+
     <div class="container" id="modulos">
-	<h2 class="text-primary text-center my-3"> M&oacute;dulos </h2>
-	<div class="card-deck mb-3 text-center">
+	<h2 class="text-primary text-center my-3"> M&oacute;dulos </h2>	
 
-	    <div class="card mb-4 shadow-sm shadow-lg">
-		<div class="card-header">
-		    <h4 class="my-0 font-weight-normal">Seguridad</h4>
-		</div>
-		<div class="card-body">
-		    <h1 class="card-title pricing-card-title"></small></h1>
-		    <p class="text-justify">La plataforma de administraci&oacute;n es f&aacute;cil e intuitivo de usar. </p>
-		    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Ver m&aacute;s</button>
-		</div>
+	<div class="row my-4">
+	  <div class="col-sm-6">
+	    <div class="card shadow ">
+	      <div class="card-body">
+	        <h4 class="card-title">Seguridad</h4>
+	        <p class="text-justify"> Gestione usuarios y perfiles, con sus respectivos permisos de acceso. </p>
+	      </div>
 	    </div>
-
-	    <div class="card mb-4 shadow-sm shadow-lg">
-		<div class="card-header">
-		    <h4 class="my-0 font-weight-normal">Seguridad</h4>
-		</div>
-		<div class="card-body">
-		    <h1 class="card-title pricing-card-title"></small></h1>
-		    <p class="text-justify">La plataforma de administraci&oacute;n es f&aacute;cil e intuitivo de usar. </p>
-		    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Ver m&aacute;s</button>
-		</div>
+	  </div>
+	  <div class="col-sm-6">
+	    <div class="card shadow">
+	      <div class="card-body">
+	        <h4 class="card-title">Mantenimiento</h4>
+	        <p class="text-justify"> Gestione a sus alumnos, profesores, cursos, grados y secciones de manera facil e intuitiva. </p>
+	      </div>
 	    </div>
-
-	    <div class="card mb-4 shadow-sm shadow-lg">
-		<div class="card-header">
-		    <h4 class="my-0 font-weight-normal">Mantenimiento</h4>
-		</div>
-		<div class="card-body">
-		    <h1 class="card-title pricing-card-title"></h1>
-		    <p class="text-justify">A diferencia de otras soluciones en las que el colegio se tiene que adaptar al software. Nuestro sistema de administraci&oacute;n escolar, se adapta a las necesidades espec&iacute;ficas del colegio.. </p>
-		    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Ver m&aacute;s</button>
-		</div>
+	  </div>
+	</div>
+	<div class="row">  
+	   <div class="col-sm-6">
+	    <div class="card shadow">
+	      <div class="card-body">
+	        <h4 class="card-title">Pagos</h4>
+	        <p class="text-justify"> Gestione los pagos de sus alumnos y a lo profesores. </p>
+	      </div>
 	    </div>
-
-	    <div class="card mb-4 shadow-sm shadow-lg">
-		<div class="card-header">
-		    <h4 class="my-0 font-weight-normal">Documentado</h4>
-		</div>
-		<div class="card-body">
-		    <h1 class="card-title pricing-card-title"></h1>
-		    <p class="text-justify">Usted puede realizar una nueva plataforma usando nuestra API, documentada y fac&iacute;l de usar, expanda su sistema admnistrativo como usted prefiera.</p>
-		    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Ver m&aacute;s</button>
-		</div>
+	  </div>
+	  <div class="col-sm-6">
+	    <div class="card shadow">
+	      <div class="card-body">
+	        <h4 class="card-title">Matriculas</h4>
+	       <p> Gestione las matr&iacute;las de sus alumnos y profesores. </p>
 	    </div>
+	  </div>
 	</div>
 
-
-
-
-
-
-
-	<!-- Modulos -->
-	<div class="container my-5" id="modulos">
-	    <h2 class="text-primary text-center "> M&oacute;dulos </h2>
-	    <div class="row my-3">
-		<div class="col">
-		    <h4> Seguridad </h4>
-		    <p class="text-justify"> Gestione usuarios y perfiles, con sus respectivos permisos de acceso. </p>
-		</div>
-		
-		<div class="col">
-		    <h4> Mantenimiento </h4>
-		    <p class="text-justify"> Gestione a sus alumnos, profesores, cursos, grados y secciones de manera facil e intuitiva. </p>
-		</div>
-
-		<div class="col">
-		    <h4> Pagos </h4>
-		    <p class="text-justify"> Gestione los pagos de sus alumnos y a lo profesores. </p>
-		</div>
-
-		<div class="col">
-		    <h4 class="text-justify"> Matr&iacute;culas </h4>
-		    <p> Gestione las matr&iacute;las de sus alumnos y profesores. </p>
-		</div>
-
-	    </div>
-	    <hr>	
 	</div>
 
-
-
-
-
+<!-- Contactenos  -->
     <div class="container my-5" id="contactenos">
 	<h2 class="text-primary text-center"> Cont&aacute;ctenos </h2>
 	<div class="row py-1">
