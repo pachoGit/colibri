@@ -57,6 +57,9 @@
 				    Usuarios <span class="sr-only">(current)</span>
                                 </a>
                             </li>
+
+
+			    <!--
                             <li class="nav-item">
 				<a class="nav-link" href="<?= base_url().'/admin/publicaciones'; ?>">
                                     <span data-feather="file"></span>
@@ -120,6 +123,8 @@
 				    Year-end sale
 				</a>
 			    </li>
+			    -->
+
 			</ul>
 		    </div>
 		</nav>

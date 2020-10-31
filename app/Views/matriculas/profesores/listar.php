@@ -11,7 +11,7 @@ if (!isset($_SESSION["nombres"]))
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/alumnoPorCurso",
+    CURLOPT_URL => base_url()."/index.php/curSecPorProfesor",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -34,7 +34,7 @@ $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
 
 $datos = ["perfil"  => $_SESSION["perfil"],                                  
-         "titulo"  => "Matricula - Alumnos",
+         "titulo"  => "Matricula - Profesores",
          "nombre"  => $_SESSION["nombres"],                                                                                                       
          "modulos" => $nmodulos];
 
@@ -73,11 +73,11 @@ $casa->cargarCabeza($datos);
 
 			<?php
 			if ($data["Estado"] == 200) {
-			    $repetidos = []; foreach($data["Detalles"] as $alumno) {
+			    $repetidos = []; foreach($data["Detalles"] as $profesor) {
 				$existe = false;
 				foreach ($repetidos as $clave => $valor)
 				{
-				    if ($clave == $alumno["idAlumno"] and $valor == $alumno["ciclo"])
+				    if ($clave == $profesor["idProfesor"] and $valor == $profesor["ciclo"])
 				    {
 					$existe = true;
 					break;
@@ -86,18 +86,18 @@ $casa->cargarCabeza($datos);
 				}
 				if ($existe == false)
 				{
-				    $repetidos[$alumno["idAlumno"]] = $alumno["ciclo"];
+				    $repetidos[$profesor["idProfesor"]] = $profesor["ciclo"];
 			?>
 			<tbody>
 			    <tr class="odd gradeX">
-				<td><?php echo $alumno['idAlumnoPorCurso']; ?></td>
-				<td><?php echo $alumno['nombres']; ?></td>
-				<td><?php echo $alumno['apellidos']; ?></td>
-				<td><?php echo $alumno['ciclo']; ?></td>
-				<td><?php echo $alumno['fechaCreacion']; ?></td>
-				<td><a href="ver/<?= $alumno['idAlumnoPorCurso']?>" class="btn
+				<td><?php echo $profesor['idCurSecPorProfesor']; ?></td>
+				<td><?php echo $profesor['nombres']; ?></td>
+				<td><?php echo $profesor['apellidos']; ?></td>
+				<td><?php echo $profesor['ciclo']; ?></td>
+				<td><?php echo $profesor['fechaCreacion']; ?></td>
+				<td><a href="ver/<?= $profesor['idCurSecPorProfesor']?>" class="btn
 					     btn-secondary">Ver</a></td>
-				<td><a onclick="return alerta();" href="eliminar/<?= $alumno['idAlumnoPorCurso']?>"
+				<td><a onclick="return alerta();" href="eliminar/<?= $profesor['idCurSecPorProfesor']?>"
 				       class="btn btn-danger">Eliminar</a></td>
 			    </tr>
 			</tbody>

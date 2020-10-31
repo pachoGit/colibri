@@ -46,4 +46,19 @@ class ModeloCurSecPorProfesor extends Model
                 ->join("Ciclos cl", "c.id_ciclo = cl.idCiclo")
                 ->get()->getResultArray();
     }
+
+    public function traerMostrar($idprofesor, $idciclo, $cliente)
+    {
+        return $this->db->table("CurSecPorProfesor c")
+                ->where("c.estado", 1)
+                ->where("c.id_cliente", $cliente)
+                ->where("c.id_profesor", $idprofesor)
+                ->where("c.id_ciclo", $idciclo)                
+                ->join("Profesores tc", "c.id_profesor = tc.idProfesor")
+                ->join("Cursos cc", "c.id_curso = cc.idCurso")
+                ->join("Secciones nc", "c.id_seccion = nc.idSeccion")
+                ->join("Ciclos cl", "c.id_ciclo = cl.idCiclo")
+                ->get()->getResultArray();
+    }
+    
 }
