@@ -58,7 +58,7 @@
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/secciones';1?>">
 					    Secciones
 					</a>
 				    </li>

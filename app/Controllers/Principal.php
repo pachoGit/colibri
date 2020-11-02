@@ -20,6 +20,10 @@ class Principal extends Controller
     {
         return $this->vistasDocSimple("principal/documentacion/seguridad/usuarios");
     }
+    public function secciones()
+    {
+        return $this->vistasDocSimple("principal/documentacion/mantenimiento/secciones");
+    }
 
 }
 
