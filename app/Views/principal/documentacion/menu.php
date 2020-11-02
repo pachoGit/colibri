@@ -16,12 +16,12 @@
 			    <div class="card-body">
 				<ul class="nav flex-column">
 				    <li class="nav-item">
-					<a class="nav-link" href="<?= base_url().'/index.php/principal/usuarios';1?>">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/usuarios';?>">
 					    Usuarios
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/perfiles';?>">
 					    Perfiles
 					</a>
 				    </li>
@@ -43,32 +43,32 @@
 			    <div class="card-body">
 				<ul class="nav flex-column">
 				    <li class="nav-item">
-					<a class="nav-link" href="usuarios.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/alumnos';?>">
 					    Alumnos
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/profesores';?>">
 					    Profesores
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="usuarios.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/grados';?>">
 					    Grados
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/secciones';?>">
 					    Secciones
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="usuarios.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/cursos';?>">
 					    Cursos
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/sedes';?>">
 					    Sedes
 					</a>
 				    </li>
@@ -91,17 +91,17 @@
 			    <div class="card-body">
 				<ul class="nav flex-column">
 				    <li class="nav-item">
-					<a class="nav-link" href="usuarios.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/palumnos';?>">
 					    Pagos de alumnos
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/pprofesores';?>">
 					    Pagos a profesores
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/pmotivo';?>">
 					    Motivo de pagos
 					</a>
 				    </li>
@@ -124,12 +124,12 @@
 			    <div class="card-body">
 				<ul class="nav flex-column">
 				    <li class="nav-item">
-					<a class="nav-link" href="usuarios.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/malumnos';?>">
 					    Alumnos
 					</a>
 				    </li>
 				    <li class="nav-item">
-					<a class="nav-link" href="perfiles.php">
+					<a class="nav-link" href="<?= base_url().'/index.php/principal/mprofesores';?>">
 					    Profesores
 					</a>
 				    </li>
