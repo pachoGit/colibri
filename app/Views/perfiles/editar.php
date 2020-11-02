@@ -8,6 +8,29 @@ if (!isset($_SESSION["nombres"]))
     return;
 }
 
+// Permisos del perfil
+
+$curl = curl_init();
+curl_setopt_array($curl, array(
+    CURLOPT_URL => base_url()."/index.php/permisos/verDePerfil/".$id,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+	$_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
+    ),
+));
+
+$response = curl_exec($curl);
+curl_close($curl);
+
+$permisos = json_decode($response, true);
+$permisos = $permisos["Detalles"];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     // Si no selecciono ningun permiso...
@@ -20,14 +43,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => base_url()."/index.php/perfiles/create",
+        CURLOPT_URL => base_url()."/index.php/perfiles/update/".$_POST["idPerfil"],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_CUSTOMREQUEST => "PUT",
         CURLOPT_POSTFIELDS =>
         "perfil=".$_POST["perfil"].
         "&id_cliente=".$_SESSION["id_cliente"],
@@ -49,114 +72,123 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
     }
 
-    // Obtenemos el perfil recien guardado
-    $m_perfiles = new App\Models\ModeloPerfiles();
-    $perfiles = $m_perfiles->where("perfil", $_POST["perfil"])->findAll();
-    $perfil = $perfiles[0];
+    // Verificar si ya esta registrado los modulos padres
 
-    
-    // Insertamos el la tabla permisos los modulos padres
+    $crear = false;
     foreach ($_POST["permisosP"] as $id_modulo)
     {
-        $curl = curl_init();
+	foreach ($permisos as $permAcutal)
+	{
+	    if ($id_modulo == $permActual["id_modulo"])
+	    {
+		$crear = false;
+		break;
+	    }
+	    else
+	    {
+		$crear = true;
+	    }
+	}
+	if ($crear == true)
+	{
+	    $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => base_url()."/index.php/permisos/create",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>
-            "id_perfil=".$perfil["idPerfil"].
-            "&id_modulo=".$id_modulo.
-            "&id_cliente=".$_SESSION["id_cliente"],
-            CURLOPT_HTTPHEADER => array(
-                $_SESSION["auth"],
-                "Content-Type: application/x-www-form-urlencoded",
-            ),
-        ));
+	    curl_setopt_array($curl, array(
+		CURLOPT_URL => base_url()."/index.php/permisos/create",
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => "",
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => "POST",
+		CURLOPT_POSTFIELDS =>
+		    "id_perfil=".$_POST["idPerfil"].
+				    "&id_modulo=".$id_modulo.
+				    "&id_cliente=".$_SESSION["id_cliente"],
+		CURLOPT_HTTPHEADER => array(
+		    $_SESSION["auth"],
+		    "Content-Type: application/x-www-form-urlencoded",
+		),
+	    ));
 
-        $response = curl_exec($curl);
-        curl_close($curl);
+	    $response = curl_exec($curl);
+	    curl_close($curl);
+	}
+    }
 
-        $data = json_decode($response, true);
+    // Verficar si esta registrado los modulos hijos
 
-        if ($data["Estado"] != 200)
-        {
-            // Redireccion
-            $mensaje = $data["Detalles"];
-            echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
-        }
-    } 
-    
-    // Insertamos el la tabla permisos los modulos hijos
+    $crear = false;
     foreach ($_POST["permisosH"] as $id_modulo)
     {
-        $curl = curl_init();
+	foreach ($permisos as $permAcutal)
+	{
+	    if ($id_modulo == $permActual["id_modulo"])
+	    {
+		$crear = false;
+		break;
+	    }
+	    else
+	    {
+		$crear = true;
+	    }
+	}
+	if ($crear == true)
+	{
+	    $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => base_url()."/index.php/permisos/create",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS =>
-            "id_perfil=".$perfil["idPerfil"].
-            "&id_modulo=".$id_modulo.
-            "&id_cliente=".$_SESSION["id_cliente"],
-            CURLOPT_HTTPHEADER => array(
-                $_SESSION["auth"],
-                "Content-Type: application/x-www-form-urlencoded",
-            ),
-        ));
+	    curl_setopt_array($curl, array(
+		CURLOPT_URL => base_url()."/index.php/permisos/create",
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => "",
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => "POST",
+		CURLOPT_POSTFIELDS =>
+		    "id_perfil=".$_POST["idPerfil"].
+				    "&id_modulo=".$id_modulo.
+				    "&id_cliente=".$_SESSION["id_cliente"],
+		CURLOPT_HTTPHEADER => array(
+		    $_SESSION["auth"],
+		    "Content-Type: application/x-www-form-urlencoded",
+		),
+	    ));
 
-        $response = curl_exec($curl);
-        curl_close($curl);
+	    $response = curl_exec($curl);
+	    curl_close($curl);
+	}
+    }
 
-        $data = json_decode($response, true);	
-
-        if ($data["Estado"] != 200)
-        {
-            // Redireccion
-            $mensaje = $data["Detalles"];
-            echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
-        }
-    } 
     // Redireccion
-    echo "<script>alert('Se registro correctamente el perfil');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
+    echo "<script>alert('Se actualizó correctamente el perfil');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
 }
-else
-{
-    
-    $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-	CURLOPT_URL => base_url()."/index.php/perfiles/show/".$id,
-	CURLOPT_RETURNTRANSFER => true,
-	CURLOPT_ENCODING => "",
-	CURLOPT_MAXREDIRS => 10,
-	CURLOPT_TIMEOUT => 0,
-	CURLOPT_FOLLOWLOCATION => true,
-	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	CURLOPT_CUSTOMREQUEST => "GET",
-	CURLOPT_HTTPHEADER => array(
-	    $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
-	),
-    ));
+$curl = curl_init();
 
-    $response = curl_exec($curl);
-    curl_close($curl);
+curl_setopt_array($curl, array(
+    CURLOPT_URL => base_url()."/index.php/perfiles/show/".$id,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+	$_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
+    ),
+));
 
-    $data = json_decode($response, true);
-    $data = $data["Detalles"][0];
+$response = curl_exec($curl);
+curl_close($curl);
 
-}
+$data = json_decode($response, true);
+$perfil = $data["Detalles"][0];
+
+
 
 $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
@@ -212,9 +244,10 @@ foreach ($padres as $smodulo)
 		    <div class="widget-content" >
 			
 			<form  method="post" class="needs-validation" novalidate>
+			    <input type="hidden" name="idPerfil" value="<?= $perfil["idPerfil"]; ?>">
 			    <div class="form-group">
 				<label for="perfil">Nombre del perfil</label>
-				<input type="text" class="form-control" value="<?= $data["perfil"]; ?>" name="perfil" id="perfil" required>
+				<input type="text" class="form-control" value="<?= $perfil["perfil"]; ?>" name="perfil" id="perfil" required>
 				<div class="valid-feedback">
 				    Esto est&aacute; bien
 				</div>
@@ -228,7 +261,7 @@ foreach ($padres as $smodulo)
 				<?php foreach ($padres as $padre): ?>
 				    <div class="col">
 					<div class="form-check form-check-inline">
-					    <input class="form-check-input ml-5" type="checkbox" name="permisosP[]" value="<?= $padre["idModulo"];?>" id="permisosP">
+					    <input class="form-check-input ml-5" <?php foreach ($permisos as $permiso) { if ($permiso["id_modulo"] == $padre["idModulo"]) {echo "checked"; }}?> type="checkbox" name="permisosP[]" value="<?= $padre["idModulo"];?>" id="permisosP">
 					    <label class="form-check-label" for="permisosP">
 						<?= $padre["modulo"]; ?>
 					    </label>
@@ -242,7 +275,7 @@ foreach ($padres as $smodulo)
 				    <div class="col">
 					<?php  foreach  ($nhijos as $hijo): ?>
 					    <div class="form-check">
-						<input class="form-check-input" type="checkbox" name="permisosH[]" value="<?= $hijo["idModulo"];?>" id="permisosH">
+						<input class="form-check-input" <?php foreach ($permisos as $permiso) { if ($permiso["id_modulo"] == $hijo["idModulo"]) {echo "checked"; }}?> type="checkbox" name="permisosH[]" value="<?= $hijo["idModulo"];?>" id="permisosH">
 						<label class="form-check-label" for="permisosH">
 						    <?= $hijo["modulo"]; ?>
 						</label>
@@ -251,15 +284,11 @@ foreach ($padres as $smodulo)
 				    </div>
 				<?php endforeach;?>
 			    </div>
-
-
 			    <button type="submit" class="btn btn-primary mt-3">Registrar</button>
 			    <a href="<?= base_url().'/index.php/perfiles/listar'; ?>" class="btn btn-danger mt-3"> Cancelar </a>
-
 			</form>
-			
-		    </div>
 
+		    </div>
 		</div>
 	    </div>
 	</div>

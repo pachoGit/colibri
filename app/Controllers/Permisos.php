@@ -13,9 +13,9 @@ class Permisos extends Controller
 {
     public function index()
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -44,9 +44,9 @@ class Permisos extends Controller
 
     public function show($id)
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -231,6 +231,39 @@ class Permisos extends Controller
             $modeloPermisos->update($id, $datos);
             $data = ["Estado" => 200, "Detalles" => "Datos del permiso eliminado"];
             return json_encode($data, true);
+        }
+        return json_encode($error);
+    }
+
+    public function verDePerfil($id)
+    {
+        $solicitud = \Config\Services::request();
+        $validacion =\Config\Services::validation();
+        $cabecera = $solicitud->getHeaders();
+        $modeloRegistros = new ModeloRegistros();
+
+        $registros = $modeloRegistros->where("estado", 1)->findAll();
+
+        foreach ($registros as $clave => $valor)
+        {
+            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
+                continue;
+            }
+            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
+            if ($cabecera["Authorization"] != $autorizacion)
+            {
+                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
+                continue;
+            }
+            $modeloPermisos = new ModeloPermisos();
+            $permisos = $modeloPermisos->traerDePerfil($id, $_SERVER["HTTP_CLIENTE"]);
+            if (empty($permisos))
+            {
+                return json_encode(["Estado" => 404, "Detalles" => "Este perfil no tiene permisos"], true);
+            }
+            return json_encode(["Estado" => 200, "Detalles" => $permisos]);
         }
         return json_encode($error);
     }
