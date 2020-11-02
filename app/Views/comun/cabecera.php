@@ -44,6 +44,6 @@
 		<p class="navbar h1 text-white"> <?= $titulo; ?> </p>
 	    </div>
 	    <div class="container d-flex justify-content-end">
-		<img class="img-thumbnail" src="<?= base_url().'/public/media/colibri.jpg'; ?>" style="width:48px; height:48px;">
+		<img class="img-thumbnail" src="<?= base_url().'/public/media/colibri.png'; ?>" style="width:48px; height:48px;">
 	    </div>
 	</nav>

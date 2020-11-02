@@ -32,7 +32,7 @@
   </head>
   <body class="text-center">
       <form action="<?= base_url().'/index.php/home/login' ?>" method="post" class="form-signin">
-	  <img class="mb-4" src="<?= base_url().'/public/media/colibri.jpg'; ?>" alt="" width="72" height="72">
+	  <img class="mb-4" src="<?= base_url().'/public/media/colibri.png'; ?>" alt="" width="72" height="72">
 	  <h1 class="h3 mb-3 font-weight-normal">Iniciar Sesión</h1>
 	  <label for="correo" class="sr-only">Correo Electrónico</label>
 	  <input type="email" id="correo" name="correo" class="form-control" placeholder="Correo electrónico" required autofocus>

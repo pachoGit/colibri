@@ -269,5 +269,23 @@ class Controller
         echo view("principal/comun/pie");
     }
     
+    // Vista de la documentacion
+    public function vistasDoc($vista = null, $data)
+    {
+        echo view("principal/comun/cabecera");
+        echo view("principal/documentacion/menu");
+        echo view($vista, $data);
+        echo view("principal/comun/pie");
+    }
+
+    public function vistasDocSimple($vista = null)
+    {
+        echo view("principal/comun/cabecera");
+        echo view("principal/documentacion/menu");
+        echo view($vista);
+        echo view("principal/comun/pie");
+    }
+    
+
 }
 

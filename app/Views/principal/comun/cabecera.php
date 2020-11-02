@@ -33,7 +33,7 @@
 	<link href="<?= base_url().'/public/ayudas/pricing.css'; ?>" rel="stylesheet">	
 
     </head>
-    <body  >
+    <body>
 	<nav class="site-header sticky-top py-1">
 	    <div class="container d-flex flex-column flex-md-row justify-content-between">
 		<a class="py-2" href="#" aria-label="Product">
@@ -43,6 +43,6 @@
 		<a class="py-2 d-none text-white d-md-inline-block" href="#modulos">M&oacute;dulos</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="#">Support</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="#contactenos">Cont&aacute;ctenos</a>
-		<a class="py-2 d-none text-white d-md-inline-block" href="#">Documentaci&oacute;n</a>
+		<a class="py-2 d-none text-white d-md-inline-block" href="<?= base_url().'/index.php/principal/documentacion';?>">Documentaci&oacute;n</a>
 	    </div>
 	</nav>
