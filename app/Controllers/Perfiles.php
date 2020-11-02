@@ -25,6 +25,15 @@ class Perfiles extends Controller
         echo view("perfiles/eliminar", $data);
     }
 
+    public function editar($id)
+    {
+        $mperfiles = new ModeloPerfiles();
+        $perfil = $mperfiles->traerPorId($id, $_SESSION["id_cliente"]);
+        $data = ["perfil" => $perfil[0]];
+
+        echo view("perfiles/editar", $data);
+    }
+
     public function index()
     {
         $solictud = \Config\Services::request();
