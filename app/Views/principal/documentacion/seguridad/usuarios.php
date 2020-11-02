@@ -1,11 +1,11 @@
-<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: monospace;">
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: Arial; font-size: 18px">
     <p>
     Esta secci&oacute;n contiene la informaci&oacute;n de la gesti&oacute;n de usuarios, el cual se puede acceder a trav&eacute;s del POSTMAN en la siguiente direcci&oacute;n:
     Cabe mencionar que es necesario que obtengas el token de seguridad para tener acceso a todos los recursos, si todav&iacute;a no cuentas con uno, puedes solicitarlo aqu&iacute;
     </p>
 
-    <h2> M&eacute;todo GET</h2>
 
+    <h2> M&eacute;todo GET</h2>
     <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; solicitar informaci&oacute;n de los usuarios de un cliente determinado, se debe rellenar
 	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener su lista de usuarios registrados
     </p>
@@ -24,15 +24,26 @@
     <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/get_show.png'; ?>"> </p>
     <h3> Resultado del m&eacute;todo GET - SHOW </h3>
     <p> Usted debe obtener un resultado como este </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/resultado_get.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/resultado_get_show.png'; ?>"> </p>
 
 
     <h2> M&eacute;todo POST</h2>
-
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; registrar informaci&oacute;n de un usuario de un cliente determinado, se debe rellenar
-	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente en el cual se crear&aacute; el usuario
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; registrar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
+	especificar el cliente en el campo del body de POSTMAN.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/post.png'; ?>"> </p>
+
+    <h2> Método PUT </h2>
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
+	especificar el cliente en el campo del body de POSTMAN.
+    </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/put.png'; ?>"> </p>
+    
+    <h2> Método DELETE </h2>
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
+	especificar el cliente en el campo del body de POSTMAN.
+    </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/delete.png'; ?>"> </p>
 
 
 </main>
