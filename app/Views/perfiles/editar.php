@@ -131,6 +131,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     // Redireccion
     echo "<script>alert('Se registro correctamente el perfil');window.location.href = '".base_url()."/index.php/perfiles/listar';</script>";
 }
+else
+{
+    
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+	CURLOPT_URL => base_url()."/index.php/perfiles/show/".$id,
+	CURLOPT_RETURNTRANSFER => true,
+	CURLOPT_ENCODING => "",
+	CURLOPT_MAXREDIRS => 10,
+	CURLOPT_TIMEOUT => 0,
+	CURLOPT_FOLLOWLOCATION => true,
+	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	CURLOPT_CUSTOMREQUEST => "GET",
+	CURLOPT_HTTPHEADER => array(
+	    $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
+	),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    $data = json_decode($response, true);
+    $data = $data["Detalles"][0];
+
+}
 
 $casa = new App\Controllers\Casa();
 $nmodulos = $casa->traerModulos();
@@ -188,7 +214,7 @@ foreach ($padres as $smodulo)
 			<form  method="post" class="needs-validation" novalidate>
 			    <div class="form-group">
 				<label for="perfil">Nombre del perfil</label>
-				<input type="text" class="form-control" value="<?= $perfil["perfil"]; ?>" name="perfil" id="perfil" required>
+				<input type="text" class="form-control" value="<?= $data["perfil"]; ?>" name="perfil" id="perfil" required>
 				<div class="valid-feedback">
 				    Esto est&aacute; bien
 				</div>
