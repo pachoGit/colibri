@@ -8,7 +8,7 @@
 
     <h2> Método GET</h2>
 
-    <p> A través de este método usted podrá solicitar información de los grados que tiene un cliente determinado,en este caso tendrá que especificar el cliente en el campo del body de POSTMAN "id_cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener su lista de grados registradas
+    <p> A través de este método usted podrá solicitar información de los grados que tiene un cliente determinado,en este caso tendrá que especificar el cliente en el campo del headers de POSTMAN "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener su lista de grados registradas
     </p>
     <p><img src="<?= base_url().'/public/documentacion/mantenimiento/grados/get.jpg'; ?>"> </p>
     
@@ -19,7 +19,7 @@
     
     <h3> M&eacute;todo GET - SHOW </h3>
 
-    <p> A través de este método usted podr&aacute; solicitar informaci&oacute;n de un grado en especif&iacute;co de un cliente determinado, en este caso tendrá que especificar el cliente en el campo del body de POSTMAN "id_cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener la sección.
+    <p> A través de este método usted podr&aacute; solicitar informaci&oacute;n de un grado en especif&iacute;co de un cliente determinado, en este caso tendrá que especificar el cliente en el campo del headers de POSTMAN "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener la sección.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/mantenimiento/grados/show.jpg'; ?>"> </p>
     <h3> Resultado del m&eacute;todo GET - SHOW </h3>
