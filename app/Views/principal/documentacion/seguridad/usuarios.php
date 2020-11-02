@@ -32,7 +32,7 @@
     <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; registrar informaci&oacute;n de un usuario de un cliente determinado, se debe rellenar
 	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente en el cual se crear&aacute; el usuario
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/get.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/post.png'; ?>"> </p>
 
 
 </main>
