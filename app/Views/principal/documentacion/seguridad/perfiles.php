@@ -6,44 +6,45 @@
 
 
     <h2> M&eacute;todo GET</h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; solicitar informaci&oacute;n de los usuarios de un cliente determinado, se debe rellenar
-	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener su lista de usuarios registrados
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; solicitar informaci&oacute;n de los perfiles usuarios de un cliente determinado, se debe rellenar
+	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener su lista de perfiles usuarios registrados
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/get.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/get.png'; ?>"> </p>
     
     <h3> Resultado del m&eacute;todo GET </h3>
     <p> Usted debe obtener un resultado como este </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/resultado_get.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/resultado_get.png'; ?>"> </p>
 
     
     <h3> M&eacute;todo GET - SHOW </h3>
 
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; solicitar informaci&oacute;n de un usuario en especif&iacute;co de un cliente determinado, se debe rellenar
-	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener el usuario
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; solicitar informaci&oacute;n de un perfil de usuario en específico de un cliente determinado, se debe rellenar
+	un campo m&aacute;s en la cabecera (headers) con el nombre de "cliente", esto representa el id (en este caso 1) del cliente del cual se desea obtener el perfil de usuario.
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/get_show.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/get_show.png'; ?>"> </p>
     <h3> Resultado del m&eacute;todo GET - SHOW </h3>
     <p> Usted debe obtener un resultado como este </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/resultado_get_show.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/resultado_get_show.png'; ?>"> </p>
 
 
     <h2> M&eacute;todo POST</h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; registrar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; registrar la informaci&oacute;n de un nuevo perfil de usuario de un cliente determinado, en este caso tendrá que
 	especificar el cliente en el campo del body de POSTMAN.
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/post.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/post.png'; ?>"> </p>
 
     <h2> Método PUT </h2>
     <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
 	especificar el cliente en el campo del body de POSTMAN.
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/put.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/put.png'; ?>"> </p>
     
     <h2> Método DELETE </h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
-	especificar el cliente en el campo del body de POSTMAN.
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado.
     </p>
-    <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/delete.png'; ?>"> </p>
+    <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/delete.png'; ?>"> </p>
 
 
 </main>
+</div>
+</div>
