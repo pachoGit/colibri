@@ -34,8 +34,7 @@
     <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/post.png'; ?>"> </p>
 
     <h2> Método PUT </h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
-	especificar el cliente en el campo del body de POSTMAN.
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/put.png'; ?>"> </p>
     
@@ -43,8 +42,6 @@
     <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/seguridad/perfiles/delete.png'; ?>"> </p>
-
-
 </main>
 </div>
 </div>
