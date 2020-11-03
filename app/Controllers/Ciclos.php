@@ -8,9 +8,31 @@ use App\Models\ModeloCiclos;
 
 class Ciclos extends Controller
 {
+     public function listar()
+    {
+        return view("ciclos/listar");
+    }
+
+    public function registrar()
+    {
+        return view("ciclos/registrar");
+    }
+    // Funciona 
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        return view("ciclos/editar", $data);
+    }
+
+    public function eliminar($id)
+    {
+        $data = ["id" => $id];
+        echo view("ciclos/eliminar", $data);
+    }
+
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -32,7 +54,7 @@ class Ciclos extends Controller
                 continue;
             }
             $modeloCiclos = new ModeloCiclos();
-            $ciclos = $modeloCiclos->traerCiclos($cliente);
+            $ciclos = $modeloCiclos->traerCiclos($_SERVER["HTTP_CLIENTE"]);
             if (empty($ciclos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $ciclos]);
             return json_encode(["Estado" => 200, "Total" => count($ciclos), "Detalles" => $ciclos]);
@@ -42,7 +64,6 @@ class Ciclos extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -64,19 +85,18 @@ class Ciclos extends Controller
                 continue;
             }
             $modeloCiclos = new ModeloCiclos();
-            $ciclo = $modeloCiclos->traerPorId($id, $cliente);
+            $ciclo = $modeloCiclos->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($ciclo))
             {
-                return json_encode(["Estado" => 404, "Detalle" => "El ciclo que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "El ciclo que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalle" => $ciclo]);
+            return json_encode(["Estado" => 200, "Detalles" => $ciclo]);
         }
         return json_encode($error);
     }
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -102,7 +122,7 @@ class Ciclos extends Controller
 
             // Tomamos los datos de HTTP
             $datos = ["ciclo"      => $solicitud->getVar("ciclo"),
-                      "id_cliente" => $cliente];
+                      "id_cliente" => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -114,17 +134,17 @@ class Ciclos extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             $ciclo = $modeloCiclos->where(["estado"     => 1,
-                                           "id_cliente" => $cliente,
+                                           "id_cliente" => $datos["id_cliente"],
                                            "ciclo"      => $datos["ciclo"]])->findAll();
             if (!empty($ciclo))
-                return json_encode(["Estado" => 404, "Detalle" => "Este ciclo ya existe"]);
+                return json_encode(["Estado" => 404, "Detalles" => "Este ciclo ya existe"]);
             $datos["fechaCreacion"] = date("Y-m-d");
             // Insertamos los datos a la ba[e de datos
             $modeloCiclos->insert($datos);
-            $data = ["Estado" => 200, "Detalle" => "Registro exitoso, datos del ciclo guardado"];
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos del ciclo guardado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -168,14 +188,14 @@ class Ciclos extends Controller
             // Verificamos si no hay errores en la validacion de los datosn
             if (($errores = $validacion->getErrors()))
             {
-                return json_encode(["Estado" => 404, "Detalle" => $errores]);
+                return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
             // Insertamos los datos a la base de datos
             $ciclo = $modeloCiclos->where("estado", 1)->find($id);
             if (empty($ciclo))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el ciclo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"], true);
             $modeloCiclos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del ciclo actualizado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del ciclo actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -209,11 +229,11 @@ class Ciclos extends Controller
             $modeloCiclos = new ModeloCiclos();
             $ciclo = $modeloCiclos->where("estado", 1)->find($id);
             if (empty($ciclo))
-                return json_encode(["Estado" => 404, "Detalle" => "No existe el ciclo"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el ciclo"], true);
             $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
             // Insertamos los datos a la ba[e de datos
             $modeloCiclos->update($id, $datos);
-            $data = ["Estado" => 200, "Detalle" => "Datos del ciclo eliminado"];
+            $data = ["Estado" => 200, "Detalles" => "Datos del ciclo eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);

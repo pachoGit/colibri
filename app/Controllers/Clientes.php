@@ -209,6 +209,15 @@ class Clientes extends Controller
         $idsede = $mmodulos->insert($sedes);
         array_push($data, $idsede);
 
+        // Modulo Periodos
+        $periodos = ["modulo"         => "Periodos",
+                     "fechaCreacion"  => $fecha,
+                     "url"            => "ciclos/listar",
+                     "id_moduloPadre" => $idmantenimiento,
+                     "id_cliente"     => $id_cliente];
+        $idperiodo = $mmodulos->insert($periodos);
+        array_push($data, $idperiodo);
+
         /* Submodulos hijos del modulo Pagos */
         
         // Modulo Pagos de alumnos

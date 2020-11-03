@@ -11,7 +11,7 @@ if (!isset($_SESSION["nombres"]))
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => base_url()."/index.php/grados/delete/".$id,
+  CURLOPT_URL => base_url()."/index.php/ciclos/delete/".$id,
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -33,6 +33,6 @@ $data = json_decode($response, true);
 
 // Redireccion
 $mensaje = $data["Detalles"];
-echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/grados/listar';</script>";
+echo "<script>alert('".$mensaje."');window.location.href = '".base_url()."/index.php/ciclos/listar';</script>";
 
 ?>
