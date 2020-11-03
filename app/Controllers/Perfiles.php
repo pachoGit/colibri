@@ -25,6 +25,13 @@ class Perfiles extends Controller
         echo view("perfiles/eliminar", $data);
     }
 
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+
+        echo view("perfiles/editar", $data);
+    }
+
     public function index()
     {
         $solictud = \Config\Services::request();
@@ -82,7 +89,7 @@ class Perfiles extends Controller
                 continue;
             }
             $modeloPerfiles = new ModeloPerfiles();
-            $perfil = $modeloPerfiles->traerPorId($id, $_SESSION["id_cliente"]);
+            $perfil = $modeloPerfiles->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($perfil))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El perfil que busca no esta registrado"], true);

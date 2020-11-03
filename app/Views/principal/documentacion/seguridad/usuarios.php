@@ -1,7 +1,7 @@
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: Arial; font-size: 18px">
     <p>
     Esta secci&oacute;n contiene la informaci&oacute;n de la gesti&oacute;n de usuarios, el cual se puede acceder a trav&eacute;s del POSTMAN en la siguiente direcci&oacute;n:
-    Cabe mencionar que es necesario que obtengas el token de seguridad para tener acceso a todos los recursos, si todav&iacute;a no cuentas con uno, puedes solicitarlo aqu&iacute;
+    Cabe mencionar que es necesario que obtengas el token de seguridad para tener acceso a todos los recursos, si todav&iacute;a no cuentas con uno, puedes solicitarlo <a href="<?= base_url().'/index.php/home'?>"> aquí </a>
     </p>
 
 
@@ -34,16 +34,16 @@
     <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/post.png'; ?>"> </p>
 
     <h2> Método PUT </h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
-	especificar el cliente en el campo del body de POSTMAN.
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; editar la informaci&oacute;n de un usuario de un cliente determinado.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/put.png'; ?>"> </p>
     
     <h2> Método DELETE </h2>
-    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado, en este caso tendrá que
-	especificar el cliente en el campo del body de POSTMAN.
+    <p> A trav&eacute;s de este m&eacute;todo usted podr&aacute; eliminar la informaci&oacute;n de un usuario de un cliente determinado.
     </p>
     <p><img src="<?= base_url().'/public/documentacion/seguridad/usuarios/delete.png'; ?>"> </p>
 
 
 </main>
+</div>
+</div>
