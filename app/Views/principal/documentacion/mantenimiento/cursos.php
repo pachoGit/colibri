@@ -1,4 +1,6 @@
+<div>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: Arial; font-size: 18px">
+    
     <p>
     Esta sección contiene la informaciónde la gestión de cursos, el cual se puede acceder a través del POSTMAN en la siguiente dirección:
     <p><img src="<?= base_url().'/public/documentacion/mantenimiento/cursos/direccion.jpg'; ?>"> </p>
@@ -48,5 +50,7 @@
     <h2> Resultado del Método DELETE</h2>
     <p>El resultado de la eliminación de un curso en particular debería ser como se muestra en la siguiente imagen:</p>
     <p><img src="<?= base_url().'/public/documentacion/mantenimiento/cursos/resultado-delete.jpg'; ?>"> </p>
-
+    
 </main>
+</div>
+</div>
