@@ -51,6 +51,7 @@ class Clientes extends Controller
         
         $ruta = "/public/clientes/".$_FILES["foto"]["name"];
         $ruta2 = "/var/www/html/colibri/public/clientes/".$_FILES["foto"]["name"];
+        //$ruta2 = $_SERVER["DOCUMENT_ROOT"]."/public/clientes/".$_FILES["foto"]["name"];
         move_uploaded_file($_FILES["foto"]["tmp_name"], $ruta2);
 
         $datosCliente = ["cliente"       => $solicitud->getVar("cliente"),
@@ -73,8 +74,9 @@ class Clientes extends Controller
                         "id_cliente"    => $id_cliente];
         $id_perfil = $mperfiles->insert($datosPerfil);
 
-        $rutaFoto = "/public/clientes/".$_FILES["rutaFoto"]["name"];
+        $rutaFoto = "/public/usuarios/".$_FILES["rutaFoto"]["name"];
         $ruta2 = "/var/www/html/colibri/public/clientes/".$_FILES["rutaFoto"]["name"];
+        //$ruta2 = $_SERVER["DOCUMENT_ROOT"]."/public/usuarios/".$_FILES["rutaFoto"]["name"];        
         move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
 
 

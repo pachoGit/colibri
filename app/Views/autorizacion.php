@@ -87,7 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <div class="text-center mb-4">
       <img class="mb-4" src="<?php echo base_url().'/public/media/colibri.png';?>" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Autorizaci&oacute;n para Colibri</h1>
-      <p> Por favor ingrese su nombre, apellido y un correo para recibir sus credenciales de autorizaci&oacute;n
+      <p> Por favor ingrese su nombre, apellido y un correo para recibir sus credenciales de autorizaci&oacute;n </p>
+      <p> La documentación <a href="<?= base_url().'/index.php/principal/documentacion'; ?>"> aquí </a> </p>
     </div>
 
     <div class="form-label-group">

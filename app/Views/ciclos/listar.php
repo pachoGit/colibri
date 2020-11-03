@@ -76,7 +76,7 @@ $casa->cargarCabeza($datos);
 				    <td><?php echo $periodos['idCiclo']; ?></td>
 				    <td><?php echo $periodos['ciclo']; ?></td>
 				    <!-- <td><a href="editar/<?= $periodos['idCiclo']?>" class="btn -->
-				    <!-- btn-warning">Editar</a></td> -->
+				    <!-- btn-warning">Editar</a></td>-->
 				    <td><a onclick="return alerta();" href="eliminar/<?= $periodos['idCiclo']?>"
 					   class="btn btn-danger">Eliminar</a></td>
 				</tr>

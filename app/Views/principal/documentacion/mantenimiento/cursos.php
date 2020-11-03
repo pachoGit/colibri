@@ -1,10 +1,9 @@
-<div>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: Arial; font-size: 18px">
     
     <p>
     Esta sección contiene la informaciónde la gestión de cursos, el cual se puede acceder a través del POSTMAN en la siguiente dirección:
     <p><img src="<?= base_url().'/public/documentacion/mantenimiento/cursos/direccion.jpg'; ?>"> </p>
-    Cabe mencionar que es necesario que obtengas el token de seguridad para tener acceso a todos los recursos, si todav&iacute;a no cuentas con uno, puedes solicitarlo aqu&iacute;
+    Cabe mencionar que es necesario que obtengas el token de seguridad para tener acceso a todos los recursos, si todav&iacute;a no cuentas con uno, puedes solicitarlo <a href="<?= base_url().'/index.php/home'?>"> aquí </a>
 
     </p>
 
