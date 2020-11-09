@@ -147,16 +147,20 @@ class Cursos extends Controller
             /* Validamos las relaciones de la tabla */
             $modeloClientes = new ModeloClientes();
             $correcto = $modeloClientes->traerPorId($datos["id_cliente"]);
+
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
-            
             $correcto = $modeloCursos->traerCategoriaPorId($datos["id_categoria"], $datos["id_cliente"]);
+
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe la categoria"]);
+
             $correcto = $modeloCursos->traerNaturalezaPorId($datos["id_naturaleza"], $datos["id_cliente"]);
+
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe la naturaleza"]);
             $correcto = $modeloCursos->traerTipoPorId($datos["id_tipo"], $datos["id_cliente"]);
+
             if (empty($correcto))
                 return json_encode(["Estado" => 404, "Detalles" => "No existe el tipo"]);
 

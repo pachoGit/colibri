@@ -106,15 +106,12 @@ class Pagos extends Controller
         $data = ["id" => $id];
         echo view("pagos/profesores/eliminar", $data);
     }
-
-
     
-
-    public function index_alumnos()
+    public function index()
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -133,84 +130,19 @@ class Pagos extends Controller
                 continue;
             }
             $modeloPagos = new ModeloPagos();
-            $pagos = $modeloPagos->traerPagosAlumnos($_SERVER["HTTP_CLIENTE"]);
-            if (empty($pagos))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
-            return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
+            $pagospr = $modeloPagos->traerPagosProfesores($_SERVER["HTTP_CLIENTE"]);
+            $pagosal = $modeloPagos->traerPagosAlumnos($_SERVER["HTTP_CLIENTE"]);
+            return json_encode(["Estado" => 200, "profesores" => $pagospr, "alumnos" => $pagosal], true);
         }
         return json_encode($error, true);
+        
     }
 
-    public function show_alumno($id)
+    public function show($id)
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
-        $modeloRegistros = new ModeloRegistros();
-
-        $registros = $modeloRegistros->where("estado", 1)->findAll();
-
-        foreach ($registros as $clave => $valor)
-        {
-            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
-            {
-                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
-                continue;
-            }
-            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
-            if ($cabecera["Authorization"] != $autorizacion)
-            {
-                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
-                continue;
-            }
-            $modeloPagos = new ModeloPagos();
-            $pago = $modeloPagos->traerPorIdAlumno($id, $_SERVER["HTTP_CLIENTE"]);
-            if (empty($pago))
-            {
-                return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
-            }
-            return json_encode(["Estado" => 200, "Detalles" => $pago]);
-        }
-        return json_encode($error);
-    }
-
-
-    public function index_profesores()
-    {
-        $solictud = \Config\Services::request();
-        $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
-        $modeloRegistros = new ModeloRegistros();
-
-        $registros = $modeloRegistros->where("estado", 1)->findAll();
-
-        foreach ($registros as $clave => $valor)
-        {
-            if (!(array_key_exists("Authorization", $cabecera) && !empty($cabecera["Authorization"])))
-            {
-                $error = json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
-                continue;
-            }
-            $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
-            if ($cabecera["Authorization"] != $autorizacion)
-            {
-                $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
-                continue;
-            }
-            $modeloPagos = new ModeloPagos();
-            $pagos = $modeloPagos->traerPagosProfesores($_SERVER["HTTP_CLIENTE"]);
-            if (empty($pagos))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $pagos]);
-            return json_encode(["Estado" => 200, "Total" => count($pagos), "Detalles" => $pagos]);
-        }
-        return json_encode($error, true);
-    }
-
-    public function show_profesor($id)
-    {
-        $solictud = \Config\Services::request();
-        $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -232,15 +164,17 @@ class Pagos extends Controller
             $pago = $modeloPagos->traerPorIdProfesor($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($pago))
             {
-                return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
+                $pago = $modeloPagos->traerPorIdAlumno($id, $_SERVER["HTTP_CLIENTE"]);
+                if (empty($pago))
+                {
+                    return json_encode(["Estado" => 404, "Detalles" => "El pago que busca no esta registrado"], true);
+                }
             }
             return json_encode(["Estado" => 200, "Detalles" => $pago]);
         }
         return json_encode($error);
     }
 
-
-    
     public function create()
     {
         $solicitud = \Config\Services::request();

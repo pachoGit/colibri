@@ -10,7 +10,6 @@ class Modulos extends Controller
 {
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -32,7 +31,7 @@ class Modulos extends Controller
                 continue;
             }
             $modeloModulos = new ModeloModulos();
-            $modulos = $modeloModulos->traerModulos($cliente);
+            $modulos = $modeloModulos->traerModulos($_SERVER["HTTP_CLIENTE"]);
             if (empty($modulos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $modulos]);
             return json_encode(["Estado" => 200, "Total" => count($modulos), "Detalles" => $modulos]);
@@ -42,7 +41,6 @@ class Modulos extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -64,7 +62,7 @@ class Modulos extends Controller
                 continue;
             }
             $modeloModulos = new ModeloModulos();
-            $modulo = $modeloModulos->traerPorId($id, $cliente);
+            $modulo = $modeloModulos->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($modulo))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "El modulo que busca no esta registrado"], true);
@@ -76,7 +74,6 @@ class Modulos extends Controller
 
     public function create()
     {
-        $cliente = 1;
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();
         $cabecera = $solicitud->getHeaders(); // Para utilizar el token basico que hemos creado
@@ -104,7 +101,7 @@ class Modulos extends Controller
             $datos = ["modulo"         => $solicitud->getVar("modulo"),
                       "url"            => $solicitud->getVar("url"),
                       "id_moduloPadre" => $solicitud->getVar("id_moduloPadre"),
-                      "id_cliente"     => $cliente];
+                      "id_cliente"     => $solicitud->getVar("id_cliente")];
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
@@ -119,7 +116,7 @@ class Modulos extends Controller
                 return json_encode(["Estado" => 404, "Detalle" => $errores]);
             }
             $modulo = $modeloModulos->where(["estado"     => 1,
-                                             "id_cliente" => $cliente,
+                                             "id_cliente" => $datos["id_cliente"],
                                              "modulo"     => $datos["modulo"]])->findAll();
             if (!empty($modulo))
                 return json_encode(["Estado" => 404, "Detalle" => "Este modulo ya existe"], true);                
@@ -213,6 +210,7 @@ class Modulos extends Controller
             $modulo = $modeloModulos->where("estado", 1)->find($id);
             if (empty($modulo))
                 return json_encode(["Estado" => 404, "Detalle" => "No existe el modulo"], true);
+            $datos = ["estado" => 0];
             $modeloModulos->update($id, $datos);
             $data = ["Estado" => 200, "Detalle" => "Datos del modulo eliminado"];
             return json_encode($data, true);

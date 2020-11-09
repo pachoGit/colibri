@@ -53,8 +53,8 @@ $routes->resource("tipoReporte");
 $routes->resource("motivoPago");
 $routes->resource("pagos");
 $routes->resource("usuarios");
+$routes->resource("login");
 */
-
 /**
  * --------------------------------------------------------------------
  * Additional Routing

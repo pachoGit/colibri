@@ -5,6 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
 use App\Models\ModeloPerfiles;
+use App\Models\ModeloPermisos;
 
 class Perfiles extends Controller
 {
@@ -55,6 +56,7 @@ class Perfiles extends Controller
                 continue;
             }
             $modeloPerfiles = new ModeloPerfiles();
+            $modeloPermisos = new ModeloPermisos();            
             $perfiles = $modeloPerfiles->traerPerfiles($_SERVER["HTTP_CLIENTE"]);
             if (empty($perfiles))
             {
@@ -89,12 +91,14 @@ class Perfiles extends Controller
                 continue;
             }
             $modeloPerfiles = new ModeloPerfiles();
+            $modeloPermisos = new ModeloPermisos();
             $perfil = $modeloPerfiles->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($perfil))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El perfil que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalles" => $perfil]);
+            $permisos = $modeloPermisos->traerDePerfil($id, $_SERVER["HTTP_CLIENTE"]);
+            return json_encode(["Estado" => 200, "Detalles" => $perfil, "permisos" => $permisos], true);
         }
         return json_encode($error);
     }

@@ -19,7 +19,6 @@ class CategoriaCurso extends Controller
     
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -41,7 +40,7 @@ class CategoriaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $categorias = $modeloCursos->traerCategoriasCurso($cliente);
+            $categorias = $modeloCursos->traerCategoriasCurso($_SERVER["HTTP_CLIENTE"]);
             if (empty($categorias))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $categorias]);
             return json_encode(["Estado" => 200, "Total" => count($categorias), "Detalles" => $categorias]);
@@ -51,7 +50,6 @@ class CategoriaCurso extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -73,7 +71,7 @@ class CategoriaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $categoria = $modeloCursos->traerCategoriaPorId($id, $cliente);
+            $categoria = $modeloCursos->traerCategoriaPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($categoria))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "La categoria del curso que busca no esta registrado"], true);

@@ -4,38 +4,17 @@ namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Models\ModeloRegistros;
-use App\Models\ModeloSedes;
+use App\Models\ModeloClientes;
+use App\Models\ModeloUsuarios;
+use App\Models\ModeloSesiones;
 
-class Sedes extends Controller
+class Sesiones extends Controller
 {
-     public function listar()
-    {
-        return view("sedes/listar");
-    }
-
-    public function registrar()
-    {
-        return view("sedes/registrar");
-    }
-    // Funciona 
-
-    public function editar($id)
-    {
-        $data = ["id" => $id];
-        return view("sedes/editar", $data);
-    }
-
-    public function eliminar($id)
-    {
-        $data = ["id" => $id];
-        echo view("sedes/eliminar", $data);
-    }
-
     public function index()
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -53,20 +32,20 @@ class Sedes extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloSedes= new ModeloSedes();
-            $sedes = $modeloSedes->traerSedes($_SERVER["HTTP_CLIENTE"]);
-            if (empty($sedes))
-                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $sedes]);
-            return json_encode(["Estado" => 200, "Total" => count($sedes), "Detalles" => $sedes]);
+            $modeloSesiones = new ModeloSesiones();
+            $sesiones = $modeloSesiones->traerSesiones($_SERVER["HTTP_CLIENTE"]);
+            if (empty($sesiones))
+                return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $sesiones]);
+            return json_encode(["Estado" => 200, "Total" => count($sesiones), "Detalles" => $sesiones]);
         }
         return json_encode($error, true);
     }
 
     public function show($id)
     {
-        $solictud = \Config\Services::request();
+        $solicitud = \Config\Services::request();
         $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $cabecera = $solicitud->getHeaders();
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();
@@ -84,13 +63,13 @@ class Sedes extends Controller
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-            $modeloSedes = new ModeloSedes();
-            $sede = $modeloSedes->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
-            if (empty($sede))
+            $modeloSesiones = new ModeloSesiones();
+            $sesion = $modeloSesiones->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
+            if (empty($sesion))
             {
-                return json_encode(["Estado" => 404, "Detalles" => "La sede que busca no esta registrado"], true);
+                return json_encode(["Estado" => 404, "Detalles" => "La sesion que busca no esta registrado"], true);
             }
-            return json_encode(["Estado" => 200, "Detalles" => $sede]);
+            return json_encode(["Estado" => 200, "Detalles" => $sesion]);
         }
         return json_encode($error);
     }
@@ -121,36 +100,42 @@ class Sedes extends Controller
             }
 
             // Tomamos los datos de HTTP
-            $datos = ["sede"      => $solicitud->getVar("sede"),
-                      "direccion"=> $solicitud->getVar("direccion"),
+            $datos = ["sesion"    => date("Y-m-d H:i:s"),
+                      "id_usuario"   => $solicitud->getVar("id_usuario"),
                       "id_cliente" => $solicitud->getVar("id_cliente")];
+
             if (empty($datos))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloSedes = new ModeloSedes();
-            $validacion->setRules($modeloSedes->validationRules, $modeloSedes->validationMessages);
+            $modeloSesiones = new ModeloSesiones();
+            $validacion->setRules($modeloSesiones->validationRules, $modeloSesiones->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
+            // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
-            $sede = $modeloSedes->where(["estado"     => 1,
-                                         "id_cliente" => $datos["id_cliente"],
-                                         "sede"      => $datos["sede"]])->findAll();
-            if (!empty($sede))
-                return json_encode(["Estado" => 404, "Detalles" => "Esta sede ya existe"], true);
-            $datos["fechaCreacion"] = date("Y-m-d");
+            /* Validamos las relaciones de la tabla */
+            $modeloClientes = new ModeloClientes();
+            $modeloUsuarios = new ModeloUsuarios();
+            $correcto = $modeloClientes->traerPorId($datos["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el cliente"]);
+            
+            $correcto = $modeloUsuarios->traerPorId($datos["id_usuario"], $datos["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el usuario"]);
+
             // Insertamos los datos a la ba[e de datos
-            $modeloSedes->insert($datos);
-            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos de la sede guardado"];
+            $idsesion = $modeloSesiones->insert($datos);
+            $data = ["Estado" => 200, "Detalles" => "Registro exitoso, datos de la sesion guardado", "idsesion" => $idsesion];
             return json_encode($data, true);
         }
         return json_encode($error);
     }
-
+    
     public function update($id)
     {
         $solicitud = \Config\Services::request();
@@ -167,15 +152,12 @@ class Sedes extends Controller
                 $error =  json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
                 continue;
             }
-
             $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
-
             if ($cabecera["Authorization"] != $autorizacion)
             {
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
-
             // Tomamos los datos de HTTP
             $datos = $solicitud->getRawInput();
             if (empty($datos))
@@ -183,20 +165,26 @@ class Sedes extends Controller
                 return json_encode(["Estado" => 404, "Detalles" => "Hay datos vacios"], true);
             }
             // Configuramos las reglas de validacion
-            $modeloSedes = new ModeloSedes();
-            $validacion->setRules($modeloSedes->validationRules, $modeloSedes->validationMessages);
+            $modeloSesiones = new ModeloSesiones();
+            $validacion->setRules($modeloSesiones->validationRules, $modeloSesiones->validationMessages);
             $validacion->withRequest($this->request)->run(); // Le damos los datos de "solicitud" para que valide
-            // Verificamos si no hay errores en la validacion de los datosn
+            // Verificamos si no hay errores en la validacion de los datos
             if (($errores = $validacion->getErrors()))
             {
                 return json_encode(["Estado" => 404, "Detalles" => $errores]);
             }
+            $modeloUsuarios = new ModeloUsuarios();
             // Insertamos los datos a la base de datos
-            $sede = $modeloSedes->where("estado", 1)->find($id);
-            if (empty($sede))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la sede"], true);
-            $modeloSedes->update($id, $datos);
-            $data = ["Estado" => 200, "Detalles" => "Datos de la sede actualizado"];
+            $sesion = $modeloSesiones->where("estado", 1)->find($id);
+            if (empty($sesion))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el sesion"], true);
+            // Validamos si los datos son correctos
+            $correcto = $modeloUsuarios->traerPorId($datos["id_usuario"], $sesion["id_cliente"]);
+            if (empty($correcto))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el usuario"]);
+            
+            $modeloSesiones->update($id, $datos);
+            $data = ["Estado" => 200, "Detalles" => "Datos de la sesion actualizado"];
             return json_encode($data, true);
         }
         return json_encode($error);
@@ -218,26 +206,24 @@ class Sedes extends Controller
                 $error =  json_encode(["Estado" => 404, "Detalles" => "No esta autorizado para guardar registros"], true);
                 continue;
             }
-
             $autorizacion = "Authorization: Basic ".base64_encode($valor["cliente_id"].":".$valor["llave_secreta"]);
-
             if ($cabecera["Authorization"] != $autorizacion)
             {
                 $error = json_encode(["Estado" => 404, "Detalles" => "Token no valido"], true);
                 continue;
             }
             // Configuramos las reglas de validacion
-            $modeloSedes= new ModeloSedes();
-            $sede = $modeloSedes->where("estado", 1)->find($id);
-            if (empty($sede))
-                return json_encode(["Estado" => 404, "Detalles" => "No existe la sede"], true);
-            $datos = ["estado" => 0, "fechaElim" => date("Y-m-d")];
-            // Insertamos los datos a la ba[e de datos
-            $modeloSedes->update($id, $datos);
-            $data = ["Estado" => 200, "Detalles" => "Datos de la sede eliminado"];
+            $modeloSesiones = new ModeloSesiones();
+            $sesion = $modeloSesiones->where("estado", 1)->find($id);
+            if (empty($sesion))
+                return json_encode(["Estado" => 404, "Detalles" => "No existe el sesion"], true);
+            $datos = ["estado"    => 0,
+                      "fechaElim" => date("Y-m-d")];
+            // Insertamos los datos a la base de datos
+            $modeloSesiones->update($id, $datos);
+            $data = ["Estado" => 200, "Detalles" => "Datos de la sesion eliminado"];
             return json_encode($data, true);
         }
         return json_encode($error);
     }
 }
-

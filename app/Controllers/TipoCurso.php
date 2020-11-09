@@ -19,7 +19,6 @@ class TipoCurso extends Controller
     
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -41,7 +40,7 @@ class TipoCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $tipos = $modeloCursos->traerTiposCurso($cliente);
+            $tipos = $modeloCursos->traerTiposCurso($_SERVER["HTTP_CLIENTE"]);
             if (empty($tipos))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $tipos]);
             return json_encode(["Estado" => 200, "Total" => count($tipos), "Detalles" => $tipos]);
@@ -51,7 +50,6 @@ class TipoCurso extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -73,7 +71,7 @@ class TipoCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $tipo = $modeloCursos->traerTipoPorId($id, $cliente);
+            $tipo = $modeloCursos->traerTipoPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($tipo))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "El tipo del curso que busca no esta registrado"], true);

@@ -10,7 +10,7 @@ if (!isset($_SESSION["nombres"]))
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
-    CURLOPT_URL => base_url()."/index.php/usuarios",
+    CURLOPT_URL => "http://colibri.informaticapp.com/usuarios",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -22,6 +22,7 @@ curl_setopt_array($curl, array(
       $_SESSION["auth"], "Cliente:".$_SESSION["id_cliente"]
   ),
 ));
+
 
 $response = curl_exec($curl);
 curl_close($curl);

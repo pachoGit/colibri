@@ -75,7 +75,7 @@ class Clientes extends Controller
         $id_perfil = $mperfiles->insert($datosPerfil);
 
         $rutaFoto = "/public/usuarios/".$_FILES["rutaFoto"]["name"];
-        $ruta2 = "/var/www/html/colibri/public/clientes/".$_FILES["rutaFoto"]["name"];
+        $ruta2 = "/var/www/html/colibri/public/usuarios/".$_FILES["rutaFoto"]["name"];
         //$ruta2 = $_SERVER["DOCUMENT_ROOT"]."/public/usuarios/".$_FILES["rutaFoto"]["name"];        
         move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
 

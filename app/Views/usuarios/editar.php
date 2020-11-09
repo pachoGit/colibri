@@ -67,7 +67,7 @@ else
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => base_url()."/index.php/usuarios/show/".$id,
+        CURLOPT_URL => base_url()."/index.php/usuarios/".$id,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,

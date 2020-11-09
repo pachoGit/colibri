@@ -46,7 +46,7 @@ class AlumnoPorCurso extends Controller
         session_start();
         $m_grados = new ModeloGrados();
         // $_POST es lo que obtenemos de AJAX
-        $secciones = $m_grados->traerSeccionesDeGrado($_POST["idgrado"], $_SESSION["id_cliente"]);
+        $secciones = $m_grados->traerSeccionesDeGrado($_POST["id"], $_POST["id_cliente"]);
         return json_encode($secciones, true);
     }
 

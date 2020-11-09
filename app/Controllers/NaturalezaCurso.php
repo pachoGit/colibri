@@ -19,7 +19,6 @@ class NaturalezaCurso extends Controller
     
     public function index()
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -41,7 +40,7 @@ class NaturalezaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $naturalezas = $modeloCursos->traerNaturalezasCurso($cliente);
+            $naturalezas = $modeloCursos->traerNaturalezasCurso($_SERVER["HTTP_CLIENTE"]);
             if (empty($naturalezas))
                 return json_encode(["Estado" => 404, "Resultados" => 0, "Detalles" => $naturalezas]);
             return json_encode(["Estado" => 200, "Total" => count($naturalezas), "Detalles" => $naturalezas]);
@@ -51,7 +50,6 @@ class NaturalezaCurso extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -73,7 +71,7 @@ class NaturalezaCurso extends Controller
                 continue;
             }
             $modeloCursos = new ModeloCursos();
-            $naturaleza = $modeloCursos->traerNaturalezaPorId($id, $cliente);
+            $naturaleza = $modeloCursos->traerNaturalezaPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($naturaleza))
             {
                 return json_encode(["Estado" => 404, "Detalles" => "La naturaleza del curso que busca no esta registrado"], true);

@@ -59,7 +59,6 @@ class MotivoPago extends Controller
 
     public function show($id)
     {
-        $cliente = 1;
         $solictud = \Config\Services::request();
         $validacion =\Config\Services::validation();
         $cabecera = $solictud->getHeaders();
@@ -81,7 +80,7 @@ class MotivoPago extends Controller
                 continue;
             }
             $modeloMotivoPago = new ModeloMotivoPago();
-            $motivo = $modeloMotivoPago->traerPorId($id, $cliente);
+            $motivo = $modeloMotivoPago->traerPorId($id, $_SERVER["HTTP_CLIENTE"]);
             if (empty($motivo))
             {
                 return json_encode(["Estado" => 404, "Detalle" => "El motivo de pago que busca no esta registrado"], true);
