@@ -23,6 +23,7 @@ class ModeloSesiones extends Model
                 ->where("c.estado", 1)
                 ->where("c.id_cliente", $cliente)
                 ->join("Usuarios tc", "c.id_usuario = tc.idUsuario")
+                ->orderBy("c.sesion", "DESC")
                 ->get()->getResultArray();
     }
 

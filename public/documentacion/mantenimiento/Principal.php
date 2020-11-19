@@ -60,11 +60,6 @@ class Principal extends Controller
         return $this->vistasDocSimple("principal/documentacion/mantenimiento/sedes");
     }
 
-    public function periodos()
-    {
-        return $this->vistasDocSimple("principal/documentacion/mantenimiento/periodos");
-    }
-
     /*** Documentacion del modulo pagos ***/
 
     public function palumnos()

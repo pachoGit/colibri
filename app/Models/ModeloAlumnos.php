@@ -56,4 +56,15 @@ class ModeloAlumnos extends Model
                 ->where("a.idAlumno", $id)
                 ->get()->getResultArray();
     }
+
+    public function traerReporte($desde, $hasta, $cliente)
+    {
+        return $this->db->table("Alumnos a")
+                ->where("a.estado", 1)
+                ->where("a.id_cliente", $cliente)
+                ->where("a.fechaCreacion >", $desde)
+                ->where("a.fechaCreacion <", $hasta)
+                ->get()->getResultArray();
+
+    }
 }

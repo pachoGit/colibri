@@ -59,4 +59,18 @@ class ModeloAlumnoPorCurso extends Model
                 ->get()->getResultArray();
     }
     
+    public function traerReporte($desde, $hasta, $cliente)
+    {
+        return $this->db->table("AlumnoPorCurso c")
+                ->where("c.estado", 1)
+                ->where("c.id_cliente", $cliente)
+                ->where("c.fechaCreacion >", $desde)
+                ->where("c.fechaCreacion <", $hasta)
+                ->join("Alumnos tc", "c.id_alumno = tc.idAlumno")
+                ->join("Cursos cc", "c.id_curso = cc.idCurso")
+                ->join("Secciones nc", "c.id_seccion = nc.idSeccion")
+                ->join("Ciclos cl", "c.id_ciclo = cl.idCiclo")
+                ->get()->getResultArray();
+    }
+
 }

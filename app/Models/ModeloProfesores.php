@@ -54,4 +54,14 @@ class ModeloProfesores extends Model
                 ->where("p.idProfesor", $id)
                 ->get()->getResultArray();
     }
+
+    public function traerReporte($desde, $hasta, $cliente)
+    {
+        return $this->db->table("Profesores a")
+                ->where("a.estado", 1)
+                ->where("a.id_cliente", $cliente)
+                ->where("a.fechaCreacion <=", $hasta)
+                ->where("a.fechaCreacion >=", $desde)
+                ->get()->getResultArray();
+    }
 }

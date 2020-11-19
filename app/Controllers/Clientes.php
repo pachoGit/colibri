@@ -155,6 +155,15 @@ class Clientes extends Controller
         $idperfil = $mmodulos->insert($perfiles);
         array_push($data, $idperfil);
 
+        // Modulo Sesiones
+        $sesiones = ["modulo"         => "Sesiones",
+                     "fechaCreacion"  => $fecha,
+                     "url"            => "sesiones/listar",
+                     "id_moduloPadre" => $idseguridad,
+                     "id_cliente"     => $id_cliente];
+        $idsesion = $mmodulos->insert($sesiones);
+        array_push($data, $idsesion);
+
         /* Submodulos hijos del modulo mantenimiento*/
 
         // Modulo Alumnos
