@@ -45,7 +45,7 @@ $clientes = $data["Detalles"];
 		<?php foreach ($clientes as $cliente) :?>
 		    <div class="col-md-4">
 			<div class="card mb-4 shadow-sm">
-			    <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="<?= "http://colibri.informaticapp.com".$cliente["foto"]; ?>" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"> <title><?= $cliente["correoCliente"]; ?></title><rect width="100%" height="100%" fill="#55595c"/> </img>
+			    <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="<?= base_url().$cliente["foto"]; ?>" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"> <title><?= $cliente["correoCliente"]; ?></title><rect width="100%" height="100%" fill="#55595c"/> </img>
 			    <div class="card-body">
 				<p class="card-text"><?= $cliente["cliente"]; ?></p>
 				<div class="d-flex justify-content-between align-items-center">
@@ -54,7 +54,7 @@ $clientes = $data["Detalles"];
 					<!-- <a href="<?= base_url().'/index.php/clientes/ver/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-primary">Contáctenos</a> -->
 					<!-- <a href="" type="button" class="btn btn-sm btn-outline-secondary">Editar</a> -->
 					<!-- <a href="<?= base_url().'/index.php/clientes/delete/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
-					<a href="https://sanpedro.edu.pe/por-que-estudiar-aqui/" type="button" class="btn btn-sm btn-outline-primary">Ver Más</a>
+					<a href="<?= $cliente["url"]; ?>" type="button" class="btn btn-sm btn-outline-primary">Ver Más</a>
 				    </div>
 				    <small class="text-muted"><?= $cliente["fechaContrato"]; ?></small>
 				</div>
