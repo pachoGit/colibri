@@ -19,10 +19,7 @@ class Clientes extends Controller
 
     public function ver($id)
     {
-        $mclientes = new ModeloClientes();
-        $cliente = $mclientes->traerPorId($id);
-
-        $data = ["cliente" => $cliente[0]];
+        $data = ["id" => $id];
         $this->vistasAdmin("admin/clientes/ver", $data);
     }
 
@@ -30,7 +27,14 @@ class Clientes extends Controller
     // usuarios que tiene disponible para ingresar al servicio
     public function eliminar($id)
     {
-        
+        $data = ["id" => $id];
+        echo view("admin/clientes/eliminar", $data);
+    }
+
+    public function editar($id)
+    {
+        $data = ["id" => $id];
+        $this->vistasAdmin("admin/clientes/editar", $data);
     }
 
     public function traerCorreo()
@@ -236,6 +240,16 @@ class Clientes extends Controller
                      "id_cliente"     => $id_cliente];
         $idperiodo = $mmodulos->insert($periodos);
         array_push($data, $idperiodo);
+
+        // Modulo Solicitudes
+        $solicitudes = ["modulo"         => "Solicitudes",
+                        "fechaCreacion"  => $fecha,
+                        "url"            => "solicitudes/listar",
+                        "id_moduloPadre" => $idmantenimiento,
+                        "id_cliente"     => $id_cliente];
+        $idsolicitud = $mmodulos->insert($solicitudes);
+        array_push($data, $idsolicitud);
+
 
         /* Submodulos hijos del modulo Pagos */
         
