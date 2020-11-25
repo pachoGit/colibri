@@ -10,7 +10,7 @@ class ModeloClientes extends Model
     protected $primaryKey = "idCliente";
     protected $returnType = "array";
     protected $allowedFields = ["cliente", "ruc", "fechaContrato", "fechaCreacion", "correoCliente", "url",
-                                "nombreEncar", "apellidoEncar", "foto", "fechaElim", "estado"];
+                                "nombreEncar", "apellidoEncar", "foto", "fechaElim", "estado", "terminos"];
     protected $validationRules = ["cliente"       => "required|string|max_length[255]",
                                   "ruc"           => "required|string|max_length[11]|min_length[11]",
                                   "nombreEncar"   => "required|string|max_length[255]",
@@ -37,6 +37,15 @@ class ModeloClientes extends Model
         return $this->db->table("Clientes c")
                 ->where("c.estado", 1)
                 ->where("c.idCliente", $id)
+                ->get()->getResultArray();
+    }
+
+    // Traer todos los usuarios que un cliente ha creado
+    public function traerUsuarios($idcliente)
+    {
+        return $this->db->table("Usuarios u")
+                ->where("u.estado", 1)
+                ->where("u.id_cliente". $idcliente)
                 ->get()->getResultArray();
     }
 }

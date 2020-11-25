@@ -4,12 +4,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     // Soporte para las fotos
 
-    //$ruta = "/public/alumnos/".$_FILES["rutaFoto"]["name"];
-    //$ruta2 = $_SESSION["ruta"]."alumnos/".$_FILES["rutaFoto"]["name"];
-    //move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
+    $rutarf = "/public/usuarios/".$_FILES["rutaFoto"]["name"];
+    $ruta2 = "/var/www/html/colibri/public/usuarios/".$_FILES["rutaFoto"]["name"];
+    move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
+
+    $rutaf = "/public/clientes/".$_FILES["foto"]["name"];
+    $ruta2 = "/var/www/html/colibri/public/clientes/".$_FILES["foto"]["name"];
+    move_uploaded_file($_FILES["foto"]["tmp_name"], $ruta2);
+
+
+    // Primero enviamos las fotos
+    
 
     $curl = curl_init();
-
     curl_setopt_array($curl, array(
         CURLOPT_URL => "http://colibri.informaticapp.com/clientes",
         CURLOPT_RETURNTRANSFER => true,
@@ -27,20 +34,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 			    "&fechaContrato=".$_POST["fechaContrato"].
 			    "&correoCliente=".$_POST["correoCliente"].
 			    "&url=".$_POST["url"].
-			    "&foto=".$_FILES["foto"]. // Hasta aqui datos para el cliente
+			    "&terminos=".$_POST["terminos"].
+			    "&foto=".$rutaf.
 			    "&nombres=".$_POST["nombres"]. 
 			    "&apellidos=".$_POST["apellidos"].
 			    "&edad=".$_POST["edad"].
 			    "&dni=".$_POST["dni"].
 			    "&sexo=".$_POST["sexo"].
-			    "&rutaFoto=".$_FILES["rutaFoto"].
+			    "&rutaFoto=".$rutarf.
 			    "&correo=".$_POST["correo"].
 			    "&direccion=".$_POST["direccion"].
 			    "&comentario=".$_POST["comentario"].
 			    "&contra=".$_POST["contra"],
         CURLOPT_HTTPHEADER => array(
-	    $_SESSION["auth"],
+	    "Authorization: Basic YTJhYTA3YWRmaGRmcmV4ZmhnZGZoZGZlcnR0Z2VMaHJqbVR2b2cyS0hMZ2l4b0s4YjZjcHR0dS8wZFRXOm8yYW8wN29kZmhkZnJleGZoZ2RmaGRmZXJ0dGdlL3BKUmZVVlhYc1E0MW9TUURnUHUzNDB6VU42TlZSbQ==",
             "Content-Type: application/x-www-form-urlencoded",
+	    "Content-Type: image/*"
         ),
     ));
 
@@ -48,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     curl_close($curl);
 
     $data = json_decode($response, true);
-    
+
     // Redireccion
     $mensaje = $data["Detalles"];
     $id_cliente = $data["id_cliente"];
@@ -118,7 +127,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 py-md-4 px-md-4">
     <h2> Registrar cliente </h2>
-    <form  method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <form  method="post"  enctype="multipart/form-data" class="needs-validation" novalidate>
+
+
 
 	<div class="form-group">
 	    <label for="cliente">Nombre de la Instituci&oacute;n</label>
@@ -199,14 +210,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	    <input type="file" accept="image/*" class="form-control-file" name="foto" id="foto">
 	</div>
 	
+	<div class="form-group">
+	    <label for="terminos">Términos  y condiciones</label>
+	    <textarea type="text" class="form-control" name="terminos" maxlength="2000" id="terminos"> </textarea>
+	    <div class="valid-feedback">
+		Esto est&aacute; bien
+	    </div>
+	    <div class="invalid-feedback">
+		Solo hasta 2000 caracteres
+	    </div>
+	</div>
+
+
 	<hr class="border border-dark">
 
 	<!-- Aqui comienza el formulario para la creacion de un usuario del nuevo cliente -->
 	<h3> Creaci&oacute;n del usuario administrador</h3>
+
+	<div class="form-row">
+	    <div class="form-group col-md-6">
+		<label for="dni">DNI</label>
+		<input type="text" onchange="traerInformacion(this)" class="form-control" name="dni" id="dni" required minlength="8" maxlength="8">
+		<div class="invalid-feedback">
+		    Ingrese solo 8 n&uacute;meros
+		</div>
+	    </div>
+
+	    <div class="form-group col-md-6">
+		<label for="edad">Edad</label>
+		<input type="number" class="form-control" name="edad" id="edad" required>
+		<div class="valid-feedback">
+		    Esto est&aacute; bien
+		</div>
+		<div class="invalid-feedback">
+		    Ingrese un n&uacute;mero natural
+		</div>
+	    </div>
+
+	</div>
+
+
+
 	<div class="form-row">
 	    <div class="form-group col-md-6">
 		<label for="nombres">Nombres</label>
-		<input type="text" name="nombres" value="" class="form-control" id="nombres" required>
+		<input type="text" name="nombres" value="" class="form-control" id="nombres" readonly>
 		<div class="valid-feedback">
 		    Esto est&aacute; bien
 		</div>
@@ -216,7 +264,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	    </div>
 	    <div class="form-group col-md-6">
 		<label for="apellidos">Apellidos</label>
-		<input type="text" name="apellidos" value="" class="form-control" id="apellidos" required>
+		<input type="text" name="apellidos" value="" class="form-control" id="apellidos" readonly>
 		<div class="valid-feedback">
 		    Esto est&aacute; bien
 		</div>
@@ -257,27 +305,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	    </div>
 	</div>
 
-	<div class="form-row">
-	    <div class="form-group col-md-4">
-		<label for="dni">DNI</label>
-		<input type="text" onchange="traerInformacion(this)" class="form-control" name="dni" id="dni" required minlength="8" maxlength="8">
-		<div class="invalid-feedback">
-		    Ingrese solo 8 n&uacute;meros
-		</div>
-	    </div>
-
-	    <div class="form-group col-md-4">
-		<label for="edad">Edad</label>
-		<input type="number" class="form-control" name="edad" id="edad" required>
-		<div class="valid-feedback">
-		    Esto est&aacute; bien
-		</div>
-		<div class="invalid-feedback">
-		    Ingrese un n&uacute;mero natural
-		</div>
-	    </div>
-
-	</div>
 
 	<div class="form-check form-check-inline form-group">
 	    <input class="form-check-input" type="radio" name="sexo" id="masculino" value="M" required>
