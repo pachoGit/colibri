@@ -50,9 +50,11 @@ $clientes = $data["Detalles"];
 				<p class="card-text"><?= $cliente["cliente"]; ?></p>
 				<div class="d-flex justify-content-between align-items-center">
 				    <div class="btn-group">
-					<a href="<?= base_url().'/index.php/clientes/ver/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-primary">Registrar alumno</a>
+					<a href="<?= base_url().'/index.php/principal/reg_alumno/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-primary">Contáctenos</a>
+					<!-- <a href="<?= base_url().'/index.php/clientes/ver/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-primary">Contáctenos</a> -->
 					<!-- <a href="" type="button" class="btn btn-sm btn-outline-secondary">Editar</a> -->
 					<!-- <a href="<?= base_url().'/index.php/clientes/delete/'.$cliente["idCliente"]; ?>" type="button" class="btn btn-sm btn-outline-danger">Eliminar</a> -->
+					<a href="https://sanpedro.edu.pe/por-que-estudiar-aqui/" type="button" class="btn btn-sm btn-outline-primary">Ver Más</a>
 				    </div>
 				    <small class="text-muted"><?= $cliente["fechaContrato"]; ?></small>
 				</div>

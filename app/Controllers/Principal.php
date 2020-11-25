@@ -111,6 +111,12 @@ class Principal extends Controller
     {
         $this->vistasPrincipalSimple("principal/clientes/registrar");
     }
+    public function reg_alumno($id)
+    {
+        $data = ["id" => $id];
+        $this->vistasPrincipal("principal/clientes/RegAlumno", $data);
+
+    }
 
 }
     

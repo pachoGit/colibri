@@ -40,9 +40,9 @@ class Alumnos extends Controller
 
     public function index()
     {
-        $solictud = \Config\Services::request();
-        $validacion =\Config\Services::validation();
-        $cabecera = $solictud->getHeaders();
+        $solictud = \Config\Services::request(); //traer datos
+        $validacion =\Config\Services::validation(); //validar datos
+        $cabecera = $solictud->getHeaders(); //authorizacion
         $modeloRegistros = new ModeloRegistros();
 
         $registros = $modeloRegistros->where("estado", 1)->findAll();

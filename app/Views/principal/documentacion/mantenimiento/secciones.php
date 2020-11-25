@@ -1,3 +1,4 @@
+
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="font-family: Arial; font-size: 18px">
 	<p>
     Esta sección contiene la informaciónde la gestión de secciones, el cual se puede acceder a través del POSTMAN en la siguiente dirección:
