@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
+use App\Models\ModeloClientes;
 
 class Principal extends Controller
 {
@@ -94,7 +95,22 @@ class Principal extends Controller
         return $this->vistasDocSimple("principal/documentacion/matriculas/profesores");
     }
 
+    /* Funciones para los clientes */
+
+    public function instituciones()
+    {
+        $mclientes = new ModeloClientes();
+        $clientes = $mclientes->traerClientes();
+
+        $data = ["clientes" => $clientes];
+
+        $this->vistasPrincipal("principal/clientes/listar", $data);
+    }
+
+    public function reg_inst()
+    {
+        $this->vistasPrincipalSimple("principal/clientes/registrar");
+    }
+
 }
-
-
     

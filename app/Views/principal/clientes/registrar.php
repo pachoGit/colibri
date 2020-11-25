@@ -1,63 +1,3 @@
-<?php
-
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
-    // Soporte para las fotos
-
-    //$ruta = "/public/alumnos/".$_FILES["rutaFoto"]["name"];
-    //$ruta2 = $_SESSION["ruta"]."alumnos/".$_FILES["rutaFoto"]["name"];
-    //move_uploaded_file($_FILES["rutaFoto"]["tmp_name"], $ruta2);
-
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => "http://colibri.informaticapp.com/clientes",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS =>
-            "cliente=".$_POST["cliente"].
-			    "&ruc=".$_POST["ruc"].
-			    "&nombreEncar=".$_POST["nombreEncar"].
-			    "&apellidoEncar=".$_POST["apellidoEncar"].
-			    "&fechaContrato=".$_POST["fechaContrato"].
-			    "&correoCliente=".$_POST["correoCliente"].
-			    "&url=".$_POST["url"].
-			    "&foto=".$_FILES["foto"]. // Hasta aqui datos para el cliente
-			    "&nombres=".$_POST["nombres"]. 
-			    "&apellidos=".$_POST["apellidos"].
-			    "&edad=".$_POST["edad"].
-			    "&dni=".$_POST["dni"].
-			    "&sexo=".$_POST["sexo"].
-			    "&rutaFoto=".$_FILES["rutaFoto"].
-			    "&correo=".$_POST["correo"].
-			    "&direccion=".$_POST["direccion"].
-			    "&comentario=".$_POST["comentario"].
-			    "&contra=".$_POST["contra"],
-        CURLOPT_HTTPHEADER => array(
-	    $_SESSION["auth"],
-            "Content-Type: application/x-www-form-urlencoded",
-        ),
-    ));
-
-    $response = curl_exec($curl);
-    curl_close($curl);
-
-    $data = json_decode($response, true);
-    
-    // Redireccion
-    $mensaje = $data["Detalles"];
-    $id_cliente = $data["id_cliente"];
-    echo "<script>alert('".$mensaje.": IDCLIENTE: ".$id_cliente."');window.location.href = '".base_url()."/index.php/admin';</script>";
-
-}
-
-?>
-
 <script>
  function traerCorreo(correo, callback)
  {
@@ -113,12 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
  
 </script>
 
-<script src="<?= base_url().'/public/ayudas/ajax.js'; ?>"> </script>
-<script src="<?= base_url().'/public/ayudas/dni.js'; ?>"> </script>
-
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 py-md-4 px-md-4">
     <h2> Registrar cliente </h2>
-    <form  method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
 
 	<div class="form-group">
 	    <label for="cliente">Nombre de la Instituci&oacute;n</label>
@@ -260,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	<div class="form-row">
 	    <div class="form-group col-md-4">
 		<label for="dni">DNI</label>
-		<input type="text" onchange="traerInformacion(this)" class="form-control" name="dni" id="dni" required minlength="8" maxlength="8">
+		<input type="text" class="form-control" name="dni" id="dni" required minlength="8" maxlength="8">
 		<div class="invalid-feedback">
 		    Ingrese solo 8 n&uacute;meros
 		</div>
@@ -303,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	</div>
 	
 	<button type="submit" class="btn btn-primary">Registrar</button>
-        <a href="<?= base_url().'/index.php/admin'; ?>" class="btn btn-danger"> Cancelar </a>
+        <a href="<?= base_url().'/index.php/principal/instituciones'; ?>" class="btn btn-danger"> Cancelar </a>
     </form>
 
 </main>

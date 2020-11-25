@@ -41,7 +41,7 @@ class Clientes extends Controller
         return json_encode($correo, true);
     }
     
-    public function crear()
+    public function create()
     {
         $solicitud = \Config\Services::request();
 
@@ -134,6 +134,14 @@ class Clientes extends Controller
                        "id_cliente"    => $id_cliente];
         $idmatricula = $mmodulos->insert($matriculas);
         array_push($data, $idmatricula);
+
+        // Modulo Reportes
+        $reportes = ["modulo"        => "Reportes",
+                     "fechaCreacion" => $fecha,
+                     "url"           => "Views/reportes",
+                     "id_cliente"    => $id_cliente];
+        $idreporte = $mmodulos->insert($reportes);
+        array_push($data, $idreporte);
 
         /* Submodulos hijos del modulo seguridad */
 
@@ -295,7 +303,8 @@ class Clientes extends Controller
 
         /*** Fin de los permisos ***/
         
-        echo "<script>alert('Cliente creado');window.location.href = '".base_url()."/index.php/admin';</script>";
+        //echo "<script>alert('Cliente creado');window.location.href = '".base_url()."/index.php/admin';</script>";
+        return json_encode(["Estado" => 200, "Detalles" => "Registro existoso, datos del cliente guardado", "id_cliente" => $id_cliente], true);
     }
     
     public function index()
@@ -362,7 +371,7 @@ class Clientes extends Controller
         return json_encode($error);
     }
 
-    public function create()
+    public function crear()
     {
         $solicitud = \Config\Services::request();
         $validacion = \Config\Services::validation();

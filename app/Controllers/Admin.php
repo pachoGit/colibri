@@ -10,10 +10,8 @@ class Admin extends Controller
     // Inicio de para administrar nuestro clientes
     public function index()
     {
-        $mclientes = new ModeloClientes();
-        $clientes = $mclientes->traerClientes();
-
-        $data = ["clientes" => $clientes];
+        // Esta variable no sirve
+        $data = ["Estado" => 200];
 
         $this->vistasAdmin("admin/clientes/listar", $data);
     }

@@ -41,7 +41,7 @@
 		</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="#caracteristicas">Caracter&iacute;sticas</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="#modulos">M&oacute;dulos</a>
-		<a class="py-2 d-none text-white d-md-inline-block" href="#">Support</a>
+		<a class="py-2 d-none text-white d-md-inline-block" href="<?= base_url().'/index.php/principal/instituciones';?>">Instituciones</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="#contactenos">Cont&aacute;ctenos</a>
 		<a class="py-2 d-none text-white d-md-inline-block" href="<?= base_url().'/index.php/principal/documentacion';?>">Documentaci&oacute;n</a>
 	    </div>
