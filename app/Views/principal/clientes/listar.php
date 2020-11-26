@@ -33,9 +33,6 @@ $clientes = $data["Detalles"];
 	<div class="container">
 	    <h1>Lista de Instituciones</h1>
 	    <p class="lead text-muted">Instituciones registrados y usando los servicios de Colibri</p>
-	    <p>
-		<a href="<?= base_url().'/index.php/principal/reg_inst'; ?>" class="btn btn-primary my-2">Registra tu institución</a>
-	    </p>
 	</div>
     </section>
 
