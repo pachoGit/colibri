@@ -99,12 +99,7 @@ class Principal extends Controller
 
     public function instituciones()
     {
-        $mclientes = new ModeloClientes();
-        $clientes = $mclientes->traerClientes();
-
-        $data = ["clientes" => $clientes];
-
-        $this->vistasPrincipal("principal/clientes/listar", $data);
+        $this->vistasPrincipalSimple("principal/clientes/listar");
     }
 
     public function reg_inst()
